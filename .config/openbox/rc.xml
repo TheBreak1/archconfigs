@@ -178,6 +178,11 @@
     <keybind key="C-A-Left">
       <action name="GoToDesktop"/>
     </keybind>
+    <keybind key="W-Tab">
+      <action name="Execute">
+        <command>rofi -show window</command>
+      </action>
+    </keybind>
     <keybind key="C-A-Right">
       <action name="GoToDesktop"/>
     </keybind>

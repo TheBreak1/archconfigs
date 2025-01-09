@@ -17,4 +17,4 @@
 #xfce-mcs-manager &
 
 rofi -show drun &
-setxkbmap -layout us,ru -variant -option grp:alt_shift_toggle,terminate:ctrl_alt_bksp &
+setxkbmap -layout us,ru -variant -option grp:alt_shift_toggle,terminate &

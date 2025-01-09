@@ -3,7 +3,7 @@
   <menu id="root-menu" label="Applications">
     <item label="Run osu!">
       <action name="Execute">
-        <command>New Command</command>
+        <command>~/.local/bin/osu</command>
       </action>
     </item>
     <item label="Run osu!lazer">
@@ -11,6 +11,7 @@
         <command>/usr/bin/osu-lazer</command>
       </action>
     </item>
+    <separator label="Programs"/>
     <item label="File Manager">
       <action name="Execute">
         <command>xdg-open .</command>
@@ -41,71 +42,20 @@
         <command>alacritty</command>
       </action>
     </item>
-    <separator label="Categories"/>
     <!--Can be Automagically updated with (AUR)obmenzu-generator but this will fuck up everything-->
-    <menu id="0.641635728375153" label="Development">
-      <item label="CMake">
-        <action name="Execute">
-          <command>cmake-gui</command>
-        </action>
-      </item>
-    </menu>
-    <menu id="0.693794333932118" label="Games">
-      <item label="osu!lazer">
-        <action name="Execute">
-          <command>/usr/bin/osu-lazer</command>
-        </action>
-      </item>
-    </menu>
-    <menu id="0.257367645894316" label="Multimedia">
-      <item label="Qt V4L2 test Utility">
-        <action name="Execute">
-          <command>qv4l2</command>
-        </action>
-      </item>
-      <item label="Qt V4L2 video capture utility">
-        <action name="Execute">
-          <command>qvidcap</command>
-        </action>
-      </item>
-    </menu>
-    <menu id="0.569661382442924" label="Network">
-      <item label="Telegram">
-        <action name="Execute">
-          <command>telegram-desktop --</command>
-        </action>
-      </item>
-      <item label="Avahi SSH Server Browser">
-        <action name="Execute">
-          <command>/usr/bin/bssh</command>
-        </action>
-      </item>
-      <item label="Avahi VNC Server Browser">
-        <action name="Execute">
-          <command>/usr/bin/bvnc</command>
-        </action>
-      </item>
-      <item label="Zen Browser">
-        <action name="Execute">
-          <command>/opt/zen-browser-bin/zen-bin</command>
-        </action>
-      </item>
-    </menu>
-    <menu id="0.278062009389341" label="System">
-      <item label="Avahi Zeroconf Browser">
-        <action name="Execute">
-          <command>/usr/bin/avahi-discover</command>
-        </action>
-      </item>
-    </menu>
     <separator/>
     <menu id="0.720188027754453" label="System Settings">
-      <item label="Appearance Settings">
+      <item label="Open Tablet Driver">
+        <action name="Execute">
+          <command>otd-gui</command>
+        </action>
+      </item>
+      <item label="Appearance">
         <action name="Execute">
           <command>lxappearance</command>
         </action>
       </item>
-      <menu id="new_id" label="Default osu! install">
+      <menu id="new_id" label="Open .osz with...">
         <!--Here to select the default game to open osu! files with-->
         <separator/>
       </menu>
@@ -129,7 +79,7 @@
       </menu>
     </menu>
     <separator/>
-    <item label="Logout">
+    <item label="Log Out">
       <action name="Exit"/>
     </item>
     <item label="Reboot">

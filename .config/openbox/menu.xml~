@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openbox_menu xmlns="https://openbox.org/" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://openbox.org/">
+  <menu id="root-menu" label="Applications">
+    <item label="Run osu!">
+      <action name="Execute">
+        <command>~/.local/bin/osu</command>
+      </action>
+    </item>
+    <item label="Run osu!lazer">
+      <action name="Execute">
+        <command>/usr/bin/osu-lazer</command>
+      </action>
+    </item>
+    <separator label="Programs"/>
+    <item label="File Manager">
+      <action name="Execute">
+        <command>xdg-open .</command>
+      </action>
+    </item>
+    <item label="Telegram">
+      <action name="Execute">
+        <command>telegram-desktop --</command>
+      </action>
+    </item>
+    <item label="Web Browser">
+      <action name="Execute">
+        <command>xdg-open http://</command>
+      </action>
+    </item>
+    <item label="Package Manager">
+      <action name="Execute">
+        <command>/usr/bin/octopi</command>
+      </action>
+    </item>
+    <item label="Run command">
+      <action name="Execute">
+        <command>rofi -show run</command>
+      </action>
+    </item>
+    <item label="Terminal">
+      <action name="Execute">
+        <command>alacritty</command>
+      </action>
+    </item>
+    <separator label="Categories"/>
+    <!--Can be Automagically updated with (AUR)obmenzu-generator but this will fuck up everything-->
+    <menu id="0.257367645894316" label="Multimedia">
+      <item label="Qt V4L2 test Utility">
+        <action name="Execute">
+          <command>qv4l2</command>
+        </action>
+      </item>
+      <item label="Qt V4L2 video capture utility">
+        <action name="Execute">
+          <command>qvidcap</command>
+        </action>
+      </item>
+    </menu>
+    <menu id="0.569661382442924" label="Network">
+      <item label="Zen Browser">
+        <action name="Execute">
+          <command>/opt/zen-browser-bin/zen-bin</command>
+        </action>
+      </item>
+    </menu>
+    <menu id="0.278062009389341" label="System">
+      <item label="Avahi Zeroconf Browser">
+        <action name="Execute">
+          <command>/usr/bin/avahi-discover</command>
+        </action>
+      </item>
+    </menu>
+    <separator/>
+    <menu id="0.720188027754453" label="System Settings">
+      <item label="Open Tablet Driver">
+        <action name="Execute">
+          <command>otd-gui</command>
+        </action>
+      </item>
+      <item label="Appearance">
+        <action name="Execute">
+          <command>lxappearance</command>
+        </action>
+      </item>
+      <menu id="new_id" label="Open .osz with...">
+        <!--Here to select the default game to open osu! files with-->
+        <separator/>
+      </menu>
+      <menu id="0.701560194895819" label="Openbox">
+        <item label="Keybinds">
+          <action name="Execute">
+            <command>obkey</command>
+          </action>
+        </item>
+        <item label="Openbox Menu">
+          <action name="Execute">
+            <command>obmenu3</command>
+          </action>
+        </item>
+        <item label="Update Configs">
+          <action name="reconfigure"/>
+        </item>
+        <item label="Restart Openbox">
+          <action name="restart"/>
+        </item>
+      </menu>
+    </menu>
+    <separator/>
+    <item label="Log Out">
+      <action name="Exit"/>
+    </item>
+    <item label="Reboot">
+      <action name="Execute">
+        <command>systemctl reboot</command>
+      </action>
+    </item>
+    <item label="Shutdown">
+      <action name="Execute">
+        <command>systemctl poweroff</command>
+      </action>
+    </item>
+    <menu id="time" label="Time" execute="sh ~/.config/openbox/time-menu.sh"/>
+  </menu>
+</openbox_menu>
