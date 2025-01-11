@@ -6,23 +6,23 @@
  - alacritty
  - rofi
  - noto-fonts
- - nemo
- - l3afpad
+ - adapta-gtk-theme
+ - nano
+ - mc
 
 **Pacman 2nd Install:**
 
-telegram-desktop
- - nano
- - mc
- - adapta-gtk-theme
+ - telegram-desktop
+ - nemo
+ - l3afpad
 
-flameshot
+ - flameshot
 
-chromium
-go
-geany >>>> l3afpad
-neofetch
-brightness_control >>>> brightnessctl
+ - chromium
+ - go
+ - l3afpad
+ - neofetch
+ - brightness_control >>>> brightnessctl
 
 **Paru Installs:**
 
