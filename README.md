@@ -19,7 +19,7 @@
   
   - [Настройка OpenTabletDriver](guides/OTD.md)
   
-  - [Конфиг Wooting клавиатур](Wooting.md)
+  - [Конфиг Wooting клавиатур](guides/Wooting.md)
 
   - [Открытие разделов Linux на Windows и наоборот](Ext4fsd.md)
   
