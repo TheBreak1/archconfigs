@@ -46,18 +46,7 @@ makepkg -si
 | brightnessctl    | Контроль яркости ноутбучного дисплея. В здешних конфигах уже есть бинд для отдельных клавиш яркости |
 | neofetch         | ☆*:.｡. *выебон* .｡.:*☆                                                                              |
 
- 
- - telegram-desktop
- - nemo
- - l3afpad
-
- - flameshot
-
- - chromium
- - go
- - l3afpad
- - neofetch
- - brightness_control >>>> brightnessctl
+> В конфигах пока что забинжен brightness_control, меняем на brightnessctl тк его проще поставить - TBRK
 
 ### Установка Paru и егоных приложений
 
