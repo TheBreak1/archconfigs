@@ -40,13 +40,13 @@
 
 Со стороны винды всё готово, начинаем установку по гайду с одинм исключением:
 
-Пункт 4. Disk Configuration.
+### Пункт 4. Disk Configuration.
 
-Выбираем Manual Partitioning, выбираем диск, где делали разделы.
+1. Выбираем Manual Partitioning, выбираем диск, где делали разделы.
 
 ![{497A77EE-FB3A-426F-913D-CE96D9EEDA86}](https://github.com/user-attachments/assets/0ac2efcd-7b38-430b-9baa-979b958701ae)
 
-В этом списке находим наш 1Гб FAT32 раздел -> Enter -> Assign Mountpoint -> пишем "/boot"
+2. В этом списке находим наш 1Гб FAT32 раздел -> Enter -> Assign Mountpoint -> пишем "/boot"
 
 Потом 32гб ext4 раздел -> Enter -> Assign Mountpoint -> пишем "/"
 
@@ -54,7 +54,7 @@
 
 ![{031344C8-B1BC-436C-B5E1-6783182AE74A}](https://github.com/user-attachments/assets/850afb10-4864-4a8f-b2cc-16661d8429e2)
 
-Confirm and exit, Back, дальше по гайду. На всякий я бы воздержался от шифрования.
+3. Confirm and exit, Back, дальше по гайду. На всякий я бы воздержался от шифрования.
 
 
 
