@@ -3,6 +3,9 @@
 Здесь лежит несколько гайдов по отдельности, если нужно что-то конкретное. Для установки с нуля начните с [Install.md](guides/Install.md) .
 
 Так же здесь лежат уже готовые конфиги для приложений, они ставятся по гайду во время установки, но на всякий расписано, как это сделать самому. Если кто-то умный может настрочить скрипт для раскидки этого добра - лмк @t_brk1
+
+0168:err:mmdevapi:init_driver No driver from L"pulse,alsa,oss,coreaudio" could be initialized. Maybe check dependencies with WINEDEBUG=warn+module.
+
 ## Список гайдов
   
   - [Установка Arch Linux](guides/Install.md)
