@@ -5,6 +5,6 @@ setxkbmap -layout us,ru -variant -option grp:alt_shift_toggle,terminate &
 ```
 1. Сохраняем, разлогиниваемся (а лучше вообще перезапускаемся) и заходим обратно.
 
-Если у вас нет папки openbox то копируем её из `/etc/xdg(?)`
+Если у вас нет папки openbox то копируем её из `/etc/xdg`
 
 ### [Всё дай в круги поиграть](osu!wine.md)

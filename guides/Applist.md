@@ -95,4 +95,37 @@ lib32-nvidia-utils
 | ntfs-3g | Монтирование NTFS разделов винды |
 
 
+
+
+### WIP - Список всех приложений для сравнения гайдов
+
+я шизею
+
+| AUR? | часть гайда | VUDK                   | TBRK             |
+| ---- | ----------- | ---------------------- | ---------------- |
+| [ ]  | install     | git                    | ---              |
+| [x]  |             | go                     | ---???           |
+| [ ]  | install     | chromium               | ---              |
+| [ ]  | osu!wine    | wine                   | ---              |
+| [ ]  | osu!wine    | winetricks             | ---              |
+| [ ]  | osu!wine    | lib32-gnutls           | ---              |
+| [ ]  | osu!wine    | lib32-libxcomposite    | ---              |
+| [ ]  | install     | kitty                  | alacritty        |
+| [ ]  | install     | rofi                   | ---              |
+| [ ]  | applist     | nemo                   | ---              |
+| [ ]  | applist     | flameshot              | ---              |
+| [ ]  | osu!wine    | lib32-nvidia-utils     | ---              |
+| [ ]  | osu!wine    | pipewire-media-session | ---              |
+| [x]  | OTD         | opentabletdriver       | ---              |
+| [x]  | osu!wine    | osu-handler            | ---              |
+| [x]  | osu!wine    | osu-mime               | ---              |
+| [ ]  |             |                        | cjkfonts         |
+| [ ]  | install     |                        | adapta-gtk-theme |
+| [ ]  | install     |                        | nano             |
+| [ ]  | install     |                        | mc               |
+| [ ]  | install     |                        | iwd              |
+| [ ]  | install     |                        | openbox          |
+| [ ]  | install     |                        | ly               |
+| [ ]  | install     |                        | noto-fonts       |
+
 ### [Далее: Добавим русскую раскладку](rusn9keeb.md)

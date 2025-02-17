@@ -24,7 +24,7 @@
   
   - [Конфиг Wooting клавиатур](guides/Wooting.md)
 
-  - [Открытие разделов Linux на Windows и наоборот](Ext4fsd.md)
+  - [Открытие разделов Linux на Windows и наоборот](FS.md)
   
   - [Создание ссылок на старые установки osu!](Links.md)
  
