@@ -30,8 +30,10 @@ if [[ "$ACTION" == "1" ]]; then
     fi
 
     # Ask if iwd needs to be installed
-	echo " "
-    read -p "Do you want to install iwd (Wireless Daemon)? (y/n): " INSTALL_IWD
+    echo " "
+    read -t 5 -p "Do you want to install iwd (Wireless Daemon)? (y/N): " INSTALL_IWD
+    INSTALL_IWD=${INSTALL_IWD:-n}  # Default to 'n' if no input is provided
+
     if [[ "$INSTALL_IWD" == "y" || "$INSTALL_IWD" == "Y" ]]; then
         echo "Installing iwd..."
         pacman -S --noconfirm iwd
@@ -43,28 +45,22 @@ if [[ "$ACTION" == "1" ]]; then
     fi
 
     # Copy specific folders (gtk-3.0, openbox, rofi) from the repository's /configs/desktop folder to the user's .config directory
+	# NO EXISTENCE CHECKS, EVERITHING HERE IS HARD CODED.
     echo "Copying gtk-3.0, openbox, and rofi folders from /configs/desktop to $HOME_DIR/.config..."
-    REPO_DIR="$(dirname "$(realpath "$0")")"  # Get the directory where the script is located
 
     # Create the .config directory if it doesn't exist
     mkdir -p "$HOME_DIR/.config"
 
     # Copy the specified folders
     for folder in gtk-3.0 openbox rofi; do
-        if [[ -d "$REPO_DIR/configs/desktop/$folder" ]]; then
-            cp -r "$REPO_DIR/configs/desktop/$folder" "$HOME_DIR/.config/"
-            if [[ $? -ne 0 ]]; then
-                echo "Failed to copy $folder folder"
-                exit 1
-            fi
-        else
-            echo "Folder $folder not found in repository's /configs/desktop directory"
+        cp -r "configs/desktop/$folder" "$HOME_DIR/.config/"
+        if [[ $? -ne 0 ]]; then
+            echo "Failed to copy $folder folder"
             exit 1
         fi
     done
 
-    echo "Packages installed and configs copied successfully."
-fi
+    echo "Packages installed and
 
 # Install paru and chaotic-aur if option 2 is chosen
 if [[ "$ACTION" == "2" ]]; then
@@ -86,9 +82,11 @@ if [[ "$ACTION" == "2" ]]; then
     # Import chaotic-aur keys
     pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
     pacman-key --lsign-key 3056513887B78AEB
-	pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+	pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
+	pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
     # Add chaotic-aur repository to pacman.conf
-    echo "[chaotic-aur]" >> /etc/pacman.conf
+    echo "" >> /etc/pacman.conf
+	echo "[chaotic-aur]" >> /etc/pacman.conf
     echo "Include = /etc/pacman.d/chaotic-mirrorlist" >> /etc/pacman.conf
     # Update package database
     pacman -Syu --noconfirm
@@ -110,19 +108,8 @@ if [[ "$ACTION" == "3" ]]; then
         echo "osu-lazer-bin not found in pacman repositories. Falling back to paru..."
         # Check if paru is installed
         if ! command -v paru &> /dev/null; then
-            echo "paru is not installed. Installing paru first..."
-            # Install dependencies for paru
-            pacman -S --noconfirm --needed base-devel git
-            # Clone and install paru
-            git clone https://aur.archlinux.org/paru.git /tmp/paru
-            cd /tmp/paru
-            makepkg -si --noconfirm
-            cd ~
-
-            if [[ $? -ne 0 ]]; then
-                echo "Failed to install paru"
-                exit 1
-            fi
+            echo "Paru is missing. Abort."
+            exit 1
         fi
 
         echo "Installing osu-lazer-bin using paru..."
