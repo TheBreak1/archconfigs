@@ -35,17 +35,16 @@
   - Что-то ещё...
 
 
-## в .config лежат:
-- все конфиги для pipewire для уменьшения задержки
-- конфиги openbox+rofi+GTK3 для удобства пользования/красоты
-- прочая чепуха, которую наверное надо убрать
+## post-install.sh
 
-чтобы запихнуть надо:
-> git clone https://github.com/TheBreak1/archconfigs.git ; cd archconfigs ; sudo cp .configs ~/
+Я снова навернул флеш ультра, поэтому вот скрипт для автоматизации настроек сразу после установки. [[Post install script]]
 
-должно сработать после перезапуска
-
-^^^ НЕ РАБОТАЕТ Я ЕБЛАН
+```
+git clone https://github.com/TheBreak1/archconfigs.git
+cd archconfigs
+chmod +x post-install.sh
+sudo ./post-install.sh
+```
 
 ## ТУДУ
 - [ ] Отсортировать пакеты по приоритетам (первый, второй, AUR)
