@@ -80,11 +80,12 @@ if [[ "$ACTION" == "2" ]]; then
 
     echo "Adding chaotic-aur repository..."
     # Import chaotic-aur keys
-    pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com
-    pacman-key --lsign-key FBA220DFC880C036
+    pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+    pacman-key --lsign-key 3056513887B78AEB
+	pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
     # Add chaotic-aur repository to pacman.conf
     echo "[chaotic-aur]" >> /etc/pacman.conf
-    echo "Server = https://cdn-mirror.chaotic.cx/chaotic-aur/\$arch" >> /etc/pacman.conf
+    echo "Include = /etc/pacman.d/chaotic-mirrorlist" >> /etc/pacman.conf
     # Update package database
     pacman -Syu --noconfirm
 
