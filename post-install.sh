@@ -10,15 +10,18 @@ fi
 HOME_DIR="/home/$(whoami)"
 
 # Prompt the user for action
+clear
 echo "Choose an action:"
-echo "1. Install packages and copy specific configs"
+echo " "
+echo "1. Install desktop (Openbox) and its configs"
 echo "2. Install paru and chaotic-aur"
 echo "3. Install osu-lazer-bin (fallback to paru if needed)"
+echo " "
 read -p "Enter your choice (1, 2, or 3): " ACTION
 
 # Install packages and copy specific configs if option 1 is chosen
 if [[ "$ACTION" == "1" ]]; then
-    echo "Installing required packages: git, openbox, ly, alacritty, rofi, adapta-gtk-theme, nano, mc, chromium..."
+    echo "Installing required packages..."
     pacman -Syu --noconfirm git openbox ly alacritty rofi adapta-gtk-theme nano mc chromium
 
     if [[ $? -ne 0 ]]; then
@@ -27,6 +30,7 @@ if [[ "$ACTION" == "1" ]]; then
     fi
 
     # Ask if iwd needs to be installed
+	echo " "
     read -p "Do you want to install iwd (Wireless Daemon)? (y/n): " INSTALL_IWD
     if [[ "$INSTALL_IWD" == "y" || "$INSTALL_IWD" == "Y" ]]; then
         echo "Installing iwd..."
