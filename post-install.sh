@@ -13,7 +13,7 @@ HOME_DIR="/home/$(whoami)"
 clear
 echo "Choose an action:"
 echo " "
-echo "1. Install desktop (Openbox) and its configs"
+echo "1. Install desktop (SALAM) and its configs"
 echo "2. Install paru and chaotic-aur"
 echo "3. Install osu-lazer-bin (fallback to paru if needed)"
 echo " "
@@ -60,7 +60,8 @@ if [[ "$ACTION" == "1" ]]; then
         fi
     done
 
-    echo "Packages installed and
+    echo "Packages installed and configs copied successfully."
+fi
 
 # Install paru and chaotic-aur if option 2 is chosen
 if [[ "$ACTION" == "2" ]]; then

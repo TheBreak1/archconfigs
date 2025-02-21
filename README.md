@@ -37,7 +37,10 @@
 
 ## post-install.sh
 
-Я снова навернул флеш ультра, поэтому вот скрипт для автоматизации настроек сразу после установки. [[Post install script]]
+Я снова навернул флеш ультра
+[[Post install script]]
+
+**WIP ЖИРНЫМИ**
 
 ```
 git clone https://github.com/TheBreak1/archconfigs.git
