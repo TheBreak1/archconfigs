@@ -52,13 +52,22 @@ if [[ "$ACTION" == "1" ]]; then
     mkdir -p "$HOME_DIR/.config"
 
     # Copy the specified folders
-    for folder in gtk-3.0 openbox rofi; do
-        cp -r "configs/desktop/$folder" "$HOME_DIR/.config/"
+        cp -r "configs/desktop/gtk-3.0" "$HOME_DIR/.config/"
         if [[ $? -ne 0 ]]; then
-            echo "Failed to copy $folder folder"
+            echo "Failed to copy gtk-3.0 folder"
             exit 1
         fi
-    done
+		cp -r "configs/desktop/openbox" "$HOME_DIR/.config/"
+        if [[ $? -ne 0 ]]; then
+            echo "Failed to copy openbox folder"
+            exit 1
+        fi
+		cp -r "configs/desktop/rofi" "$HOME_DIR/.config/"
+        if [[ $? -ne 0 ]]; then
+            echo "Failed to copy rofi folder"
+            exit 1
+        fi
+
 
     echo "Packages installed and configs copied successfully."
 fi
