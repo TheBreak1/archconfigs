@@ -7,9 +7,10 @@ HOME_DIR="/home/$(whoami)"
 clear
 echo "Choose an action:"
 echo " "
-echo "1. Install desktop (SALAM) and its configs"
+echo "1. Install desktop (Openbox) and its configs"
 echo "2. Install paru and chaotic-aur"
-echo "3. Install osu-lazer-bin (fallback to paru if needed)"
+echo "3. Install osu!lazer "
+echo "4. Install osu!stable "
 echo " "
 read -p "Enter your choice (1, 2, or 3): " ACTION
 
