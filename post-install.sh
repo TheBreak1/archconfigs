@@ -19,7 +19,7 @@ if [[ "$ACTION" == "1" ]]; then
     echo " "
 	echo " "
 	echo "Installing required packages..."
-    sudo pacman -Syu --noconfirm git openbox ly alacritty rofi adapta-gtk-theme nano mc chromium telegram-desktop discord brightnessctl cjk-fonts
+    sudo pacman -Syu --noconfirm git openbox ly alacritty rofi adapta-gtk-theme nano mc chromium telegram-desktop discord brightnessctl
 
     if [[ $? -ne 0 ]]; then
         echo " "
