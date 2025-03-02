@@ -18,11 +18,3 @@
 
 rofi -show drun &
 setxkbmap -layout us,ru -variant -option grp:alt_shift_toggle,terminate &
-
-# This is the part where you make automount for partitions with old osu! installs.
-# Edit and uncomment what is necessary.
-# Make sure that the mountint point exists,
-# otherwise make it with "mkdir" or "mc".
-#
-# mount /dev/nvme0n1p5 /mnt/ssd &
-# mount /dev/sda1 /mnt/hdd &
