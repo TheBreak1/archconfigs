@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# Ensure the script is running with root privileges for pacman installs
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 
-   exit 1
-fi
-
 # Define the home directory
 HOME_DIR="/home/$(whoami)"
 
@@ -22,7 +16,7 @@ read -p "Enter your choice (1, 2, or 3): " ACTION
 # Install packages and copy specific configs if option 1 is chosen
 if [[ "$ACTION" == "1" ]]; then
     echo "Installing required packages..."
-    pacman -Syu --noconfirm git openbox ly alacritty rofi adapta-gtk-theme nano mc chromium
+    sudo pacman -Syu --noconfirm git openbox ly alacritty rofi adapta-gtk-theme nano mc chromium
 
     if [[ $? -ne 0 ]]; then
         echo "Failed to install packages"
@@ -36,7 +30,7 @@ if [[ "$ACTION" == "1" ]]; then
 
     if [[ "$INSTALL_IWD" == "y" || "$INSTALL_IWD" == "Y" ]]; then
         echo "Installing iwd..."
-        pacman -S --noconfirm iwd
+        sudo pacman -S --noconfirm iwd
 
         if [[ $? -ne 0 ]]; then
             echo "Failed to install iwd"
@@ -45,29 +39,27 @@ if [[ "$ACTION" == "1" ]]; then
     fi
 
     # Copy specific folders (gtk-3.0, openbox, rofi) from the repository's /configs/desktop folder to the user's .config directory
-	# NO EXISTENCE CHECKS, EVERITHING HERE IS HARD CODED.
     echo "Copying gtk-3.0, openbox, and rofi folders from /configs/desktop to $HOME_DIR/.config..."
 
     # Create the .config directory if it doesn't exist
     mkdir -p "$HOME_DIR/.config"
 
     # Copy the specified folders
-        cp -r "configs/desktop/gtk-3.0" "$HOME_DIR/.config/"
-        if [[ $? -ne 0 ]]; then
-            echo "Failed to copy gtk-3.0 folder"
-            exit 1
-        fi
-		cp -r "configs/desktop/openbox" "$HOME_DIR/.config/"
-        if [[ $? -ne 0 ]]; then
-            echo "Failed to copy openbox folder"
-            exit 1
-        fi
-		cp -r "configs/desktop/rofi" "$HOME_DIR/.config/"
-        if [[ $? -ne 0 ]]; then
-            echo "Failed to copy rofi folder"
-            exit 1
-        fi
-
+    cp -r "configs/desktop/gtk-3.0" "$HOME_DIR/.config/"
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to copy gtk-3.0 folder"
+        exit 1
+    fi
+    cp -r "configs/desktop/openbox" "$HOME_DIR/.config/"
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to copy openbox folder"
+        exit 1
+    fi
+    cp -r "configs/desktop/rofi" "$HOME_DIR/.config/"
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to copy rofi folder"
+        exit 1
+    fi
 
     echo "Packages installed and configs copied successfully."
 fi
@@ -76,7 +68,7 @@ fi
 if [[ "$ACTION" == "2" ]]; then
     echo "Installing paru (AUR helper)..."
     # Install dependencies for paru
-    pacman -S --noconfirm --needed base-devel git
+    sudo pacman -S --noconfirm --needed base-devel git
     # Clone and install paru
     git clone https://aur.archlinux.org/paru.git /tmp/paru
     cd /tmp/paru
@@ -90,16 +82,16 @@ if [[ "$ACTION" == "2" ]]; then
 
     echo "Adding chaotic-aur repository..."
     # Import chaotic-aur keys
-    pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
-    pacman-key --lsign-key 3056513887B78AEB
-	pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
-	pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+    sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+    sudo pacman-key --lsign-key 3056513887B78AEB
+    sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
+    sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
     # Add chaotic-aur repository to pacman.conf
-    echo "" >> /etc/pacman.conf
-	echo "[chaotic-aur]" >> /etc/pacman.conf
-    echo "Include = /etc/pacman.d/chaotic-mirrorlist" >> /etc/pacman.conf
+    echo "" | sudo tee -a /etc/pacman.conf
+    echo "[chaotic-aur]" | sudo tee -a /etc/pacman.conf
+    echo "Include = /etc/pacman.d/chaotic-mirrorlist" | sudo tee -a /etc/pacman.conf
     # Update package database
-    pacman -Syu --noconfirm
+    sudo pacman -Syu --noconfirm
 
     if [[ $? -ne 0 ]]; then
         echo "Failed to add chaotic-aur repository"
@@ -112,7 +104,7 @@ fi
 # Install osu-lazer-bin if option 3 is chosen
 if [[ "$ACTION" == "3" ]]; then
     echo "Attempting to install osu-lazer-bin using pacman..."
-    pacman -S --noconfirm osu-lazer-bin
+    sudo pacman -S --noconfirm osu-lazer-bin
 
     if [[ $? -ne 0 ]]; then
         echo "osu-lazer-bin not found in pacman repositories. Falling back to paru..."
