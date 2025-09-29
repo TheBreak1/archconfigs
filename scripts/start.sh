@@ -58,9 +58,9 @@ setup_chaotic_aur() {
     else
         print_status "Configuring Chaotic AUR repository"
         # Import and locally sign Chaotic AUR key
-        if pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com >/dev/null 2>&1 || \
-           pacman-key --recv-key 3056513887B78AEB --keyserver hkps://keys.openpgp.org >/dev/null 2>&1; then
-            pacman-key --lsign-key 3056513887B78AEB >/dev/null 2>&1 || print_warning "Failed to locally sign Chaotic AUR key (continuing)"
+        if pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com  || \
+           pacman-key --recv-key 3056513887B78AEB --keyserver hkps://keys.openpgp.org ; then
+            pacman-key --lsign-key 3056513887B78AEB  || print_warning "Failed to locally sign Chaotic AUR key (continuing)"
         else
             print_warning "Failed to import Chaotic AUR key (continuing)"
         fi
