@@ -14,7 +14,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-REPO_URL="https://github.com/TheBreak1/archconfigs.git"  # Replace with your actual repo
+REPO_URL="https://github.com/yourusername/archconfigs.git"  # Replace with your actual repo
 CLONE_DIR="/tmp/archconfigs"
 DEPENDENCIES=("wget" "git" "curl" "nano" "mc")  # Add your required dependencies
 
@@ -48,7 +48,7 @@ check_root() {
 # Function to install dependencies
 install_dependencies() {
     print_status "Installing dependencies: ${DEPENDENCIES[*]}"
-    pacman -S --noconfirm --needed "${DEPENDENCIES[@]}" || print_warning "Some dependencies may not have installed correctly, continuing anyway"
+    pacman -S --noconfirm --needed "${DEPENDENCIES[@]}" >/dev/null 2>&1 || print_warning "Some dependencies may not have installed correctly, continuing anyway"
 }
 
 # Function to clone repository and execute script
