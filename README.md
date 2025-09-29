@@ -42,7 +42,7 @@
 Пока наворачивается флеш ультра ведётся работа над набором скриптов, чтобы всё автоматизировать. Фундамент в качестве загрузки репозитория и меню выбора скриптов уже есть. Для запуска \\/ \\/ \\/
 
 ```
-curl -sSL https://raw.githubusercontent.com/username/repo/branch/script.sh | sudo bash
+curl -sSL https://raw.githubusercontent.com/TheBreak1/archconfigs/main/scripts/start.sh | sudo bash
 ```
 
 ## ТУДУ
