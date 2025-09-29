@@ -51,6 +51,57 @@ install_dependencies() {
     pacman -S --noconfirm --needed "${DEPENDENCIES[@]}" >/dev/null 2>&1 || print_warning "Some dependencies may not have installed correctly, continuing anyway"
 }
 
+# Function to configure Chaotic AUR repository
+setup_chaotic_aur() {
+    if grep -q "^\[chaotic-aur\]" /etc/pacman.conf; then
+        print_status "Chaotic AUR repository already configured"
+    else
+        print_status "Configuring Chaotic AUR repository"
+        # Import and locally sign Chaotic AUR key
+        if pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com >/dev/null 2>&1 || \
+           pacman-key --recv-key 3056513887B78AEB --keyserver hkps://keys.openpgp.org >/dev/null 2>&1; then
+            pacman-key --lsign-key 3056513887B78AEB >/dev/null 2>&1 || print_warning "Failed to locally sign Chaotic AUR key (continuing)"
+        else
+            print_warning "Failed to import Chaotic AUR key (continuing)"
+        fi
+
+        # Append repo stanza
+        {
+            echo ""
+            echo "[chaotic-aur]"
+            echo "Include = /etc/pacman.d/chaotic-mirrorlist"
+        } | tee -a /etc/pacman.conf >/dev/null
+
+        # Refresh databases
+        pacman -Syy >/dev/null 2>&1 || true
+    fi
+
+    # Ensure keyring and mirrorlist are installed (install directly from Chaotic CDN)
+    if pacman -Qi chaotic-keyring >/dev/null 2>&1 && pacman -Qi chaotic-mirrorlist >/dev/null 2>&1; then
+        print_status "Chaotic keyring and mirrorlist already installed"
+    else
+        print_status "Installing Chaotic AUR keyring and mirrorlist from CDN"
+        if pacman -U --noconfirm \
+            'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
+            'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' >/dev/null 2>&1; then
+            print_success "Chaotic keyring and mirrorlist installed"
+        else
+            print_warning "Failed to install chaotic keyring/mirrorlist from CDN (continuing)"
+        fi
+        pacman -Syy >/dev/null 2>&1 || true
+    fi
+}
+
+# Function to install paru helper
+install_paru() {
+    print_status "Installing paru (from Chaotic AUR if available)"
+    if pacman -S --noconfirm --needed paru >/dev/null 2>&1; then
+        print_success "paru installed successfully"
+    else
+        print_warning "Failed to install paru via pacman"
+    fi
+}
+
 # Function to clone repository and execute script
 clone_and_execute_script() {
     print_status "Cloning repository from: $REPO_URL"
@@ -121,6 +172,8 @@ main() {
     
     check_root
     install_dependencies
+    setup_chaotic_aur
+    install_paru
     clone_and_execute_script
     
     echo "=========================================="
