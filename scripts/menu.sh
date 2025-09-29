@@ -75,10 +75,14 @@ run_local_script() {
 # Function to show main menu
 show_menu() {
     echo -e "${BLUE}Available Scripts:${NC}"
-    echo -e "${GREEN}1.${NC} System Information Script"
-    echo -e "${GREEN}2.${NC} Network Check Script"
-    echo -e "${GREEN}3.${NC} Disk Usage Script"
-    echo -e "${GREEN}4.${NC} Exit"
+    echo -e "${GREEN}1.${NC} Install i3 desktop"
+    echo -e "${GREEN}2.${NC} Install Openbox desktop"
+    echo -e "${GREEN}3.${NC} Install wine + osu!stable"
+    echo -e "${GREEN}4.${NC} Install osu!lazer"
+    echo -e "${GREEN}5.${NC} Install Pipewire configs"
+    echo -e "${GREEN}6.${NC} Install OpenTabletDriver configs"
+    echo -e "${GREEN}7.${NC} Install Wooting configs"
+    echo -e "${GREEN}8.${NC} Exit"
     echo -e "${BLUE}==========================================${NC}"
 }
 
@@ -87,25 +91,37 @@ while true; do
     show_header
     show_menu
     
-    read -p "Choose an option [1-4]: " choice
+    read -p "Choose an option [1-8]: " choice
     echo
     
     case $choice in
         1)
-            run_local_script "system-info.sh"
+            run_local_script "i3.sh"
             ;;
         2)
-            run_local_script "network-info.sh"
+            run_local_script "openbox.sh"
             ;;
         3)
-            run_local_script "disk-usage.sh"
+            run_local_script "stable.sh"
             ;;
         4)
-            print_success "Goodbye!"
+            run_local_script "lazer.sh"
+            ;;
+        5)
+            run_local_script "pipewire.sh"
+            ;;
+        6)
+            run_local_script "otd.sh"
+            ;;
+        7)
+            run_local_script "wooting.sh"
+            ;;
+        8)
+            print_success "Script terminated. GLHF"
             exit 0
             ;;
         *)
-            print_error "Invalid option! Please choose between 1-4."
+            print_error "Invalid option! Please choose between 1-8."
             ;;
     esac
     
