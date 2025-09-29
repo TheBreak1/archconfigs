@@ -72,22 +72,24 @@ clone_and_execute_script() {
     # Wait a moment for files to be fully written
     sleep 1
     
-    # Verify menu.sh exists
-    if [[ ! -f "$CLONE_DIR/menu.sh" ]]; then
-        print_error "menu.sh not found in cloned repository"
+    # Verify menu.sh exists in scripts folder
+    if [[ ! -f "$CLONE_DIR/scripts/menu.sh" ]]; then
+        print_error "menu.sh not found in $CLONE_DIR/scripts/"
         print_status "Contents of $CLONE_DIR:"
         ls -la "$CLONE_DIR"
+        print_status "Contents of $CLONE_DIR/scripts/:"
+        ls -la "$CLONE_DIR/scripts/"
         exit 1
     fi
     
     # Make the script executable
-    chmod +x "$CLONE_DIR/menu.sh"
+    chmod +x "$CLONE_DIR/scripts/menu.sh"
     
     print_status "Executing the menu script..."
     echo "=========================================="
     
     # Execute the script
-    if bash "$CLONE_DIR/menu.sh"; then
+    if bash "$CLONE_DIR/scripts/menu.sh"; then
         echo "=========================================="
         print_success "Menu script executed successfully"
     else
