@@ -47,36 +47,8 @@ check_root() {
 
 # Function to install dependencies
 install_dependencies() {
-    print_status "Checking and installing dependencies..."
-    
-    local missing_deps=()
-    
-    # Check which dependencies are missing
-    for dep in "${DEPENDENCIES[@]}"; do
-        if ! pacman -Qi "$dep" &>/dev/null; then
-            missing_deps+=("$dep")
-        fi
-    done
-    
-    if [[ ${#missing_deps[@]} -eq 0 ]]; then
-        print_success "All dependencies are already installed"
-        return 0
-    fi
-    
-    print_status "Installing missing dependencies: ${missing_deps[*]}"
-    pacman -S --noconfirm --needed "${missing_deps[@]}"
-    
-    # Verify installation
-    for dep in "${missing_deps[@]}"; do
-        if pacman -Qi "$dep" &>/dev/null; then
-            print_success "$dep installed successfully"
-        else
-            print_error "Failed to install $dep"
-            return 1
-        fi
-    done
-    
-    print_success "All dependencies installed successfully"
+    print_status "Installing dependencies: ${DEPENDENCIES[*]}"
+    pacman -S --noconfirm --needed "${DEPENDENCIES[@]}" || print_warning "Some dependencies may not have installed correctly, continuing anyway"
 }
 
 # Function to clone repository and execute script
@@ -97,23 +69,14 @@ clone_and_execute_script() {
         exit 1
     fi
     
-    # Check if the menu script exists
-    local menu_script="$CLONE_DIR/menu.sh"
-    if [[ ! -f "$menu_script" ]]; then
-        print_error "Menu script not found at $menu_script"
-        print_status "Available files in repository:"
-        ls -la "$CLONE_DIR"
-        exit 1
-    fi
-    
     # Make the script executable
-    chmod +x "$menu_script"
+    chmod +x "$CLONE_DIR/menu.sh"
     
     print_status "Executing the menu script..."
     echo "=========================================="
     
     # Execute the script
-    if bash "$menu_script"; then
+    if exec "$CLONE_DIR/menu.sh"; then
         echo "=========================================="
         print_success "Menu script executed successfully"
     else

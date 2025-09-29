@@ -54,11 +54,11 @@ run_local_script() {
         chmod +x "$script_path"
     fi
     
-    print_status "Running $script_name..."
+    print_status "Running $script_name with elevated privileges..."
     echo "------------------------------------------"
     
-    # Execute the script
-    "$script_path"
+    # Execute the script with sudo
+    sudo "$script_path"
     
     local exit_code=$?
     echo "------------------------------------------"
