@@ -35,18 +35,14 @@
   - Что-то ещё...
 
 
-## post-install.sh
-
-Я снова навернул флеш ультра
-[[Post install script]]
+## Установочный скрипт
 
 **WIP ЖИРНЫМИ**
 
+Пока наворачивается флеш ультра ведётся работа над набором скриптов, чтобы всё автоматизировать. Фундамент в качестве загрузки репозитория и меню выбора скриптов уже есть. Для запуска \\/ \\/ \\/
+
 ```
-git clone https://github.com/TheBreak1/archconfigs.git
-cd archconfigs
-chmod +x post-install.sh
-sudo ./post-install.sh
+curl -sSL https://raw.githubusercontent.com/username/repo/branch/script.sh | sudo bash
 ```
 
 ## ТУДУ
