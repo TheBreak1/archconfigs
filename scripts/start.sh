@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 # Configuration
 REPO_URL="https://github.com/TheBreak1/archconfigs.git"
 CLONE_DIR="/tmp/archconfigs"
-DEPENDENCIES=("wget" "git" "curl" "nano" "mc")  # Add your required dependencies
+DEPENDENCIES=("wget" "git" "curl" "nano" "mc" "btop")  # Add your required dependencies
 
 # Function to print colored output
 print_status() {
