@@ -48,7 +48,7 @@ check_root() {
 # Function to install dependencies
 install_dependencies() {
     print_status "Installing dependencies: ${DEPENDENCIES[*]}"
-    pacman -S --noconfirm --needed --silent "${DEPENDENCIES[@]}" || print_warning "Some dependencies may not have installed correctly, continuing anyway"
+    pacman -S --noconfirm --needed "${DEPENDENCIES[@]}" || print_warning "Some dependencies may not have installed correctly, continuing anyway"
 }
 
 # Function to clone repository and execute script
