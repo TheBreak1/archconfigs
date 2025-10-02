@@ -48,7 +48,11 @@ check_root() {
 # Function to install dependencies
 install_dependencies() {
     print_status "Installing dependencies: ${DEPENDENCIES[*]}"
-    pacman -S --noconfirm --needed "${DEPENDENCIES[@]}" >/dev/null 2>&1 || print_warning "Some dependencies may not have installed correctly, continuing anyway"
+    if ! pacman -S --noconfirm --needed "${DEPENDENCIES[@]}"; then
+        print_error "Failed to install dependencies"
+        exit 1
+    fi
+    print_success "Dependencies installed successfully"
 }
 
 # Function to configure Chaotic AUR repository
@@ -73,7 +77,11 @@ setup_chaotic_aur() {
         } | tee -a /etc/pacman.conf >/dev/null
 
         # Refresh databases
-        pacman -Syy >/dev/null 2>&1 || true
+        if ! pacman -Syy; then
+            print_error "Failed to refresh package databases after adding Chaotic AUR repository"
+            exit 1
+        fi
+        print_success "Package databases refreshed successfully"
     fi
 
     # Ensure keyring and mirrorlist are installed (install directly from Chaotic CDN)
@@ -83,22 +91,28 @@ setup_chaotic_aur() {
         print_status "Installing Chaotic AUR keyring and mirrorlist from CDN"
         if pacman -U --noconfirm \
             'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
-            'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' >/dev/null 2>&1; then
+            'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'; then
             print_success "Chaotic keyring and mirrorlist installed"
         else
-            print_warning "Failed to install chaotic keyring/mirrorlist from CDN (continuing)"
+            print_error "Failed to install chaotic keyring/mirrorlist from CDN"
+            exit 1
         fi
-        pacman -Syy >/dev/null 2>&1 || true
+        if ! pacman -Syy; then
+            print_error "Failed to refresh package databases after installing Chaotic packages"
+            exit 1
+        fi
+        print_success "Package databases refreshed successfully"
     fi
 }
 
 # Function to install paru helper
 install_paru() {
     print_status "Installing paru (from Chaotic AUR if available)"
-    if pacman -S --noconfirm --needed paru >/dev/null 2>&1; then
+    if pacman -S --noconfirm --needed paru; then
         print_success "paru installed successfully"
     else
-        print_warning "Failed to install paru via pacman"
+        print_error "Failed to install paru via pacman"
+        exit 1
     fi
 }
 
