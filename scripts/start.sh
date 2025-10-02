@@ -57,10 +57,11 @@ install_dependencies() {
 
 # Function to configure Chaotic AUR repository
 setup_chaotic_aur() {
-    if grep -q "^\[chaotic-aur\]" /etc/pacman.conf; then
-        print_status "Chaotic AUR repository already configured"
+    # First, ensure keyring and mirrorlist are installed (install directly from Chaotic CDN)
+    if pacman -Qi chaotic-keyring >/dev/null 2>&1 && pacman -Qi chaotic-mirrorlist >/dev/null 2>&1; then
+        print_status "Chaotic keyring and mirrorlist already installed"
     else
-        print_status "Configuring Chaotic AUR repository"
+        print_status "Installing Chaotic AUR keyring and mirrorlist from CDN"
         # Import and locally sign Chaotic AUR key
         if pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com  || \
            pacman-key --recv-key 3056513887B78AEB --keyserver hkps://keys.openpgp.org ; then
@@ -69,6 +70,21 @@ setup_chaotic_aur() {
             print_warning "Failed to import Chaotic AUR key (continuing)"
         fi
 
+        if pacman -U --noconfirm \
+            'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
+            'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'; then
+            print_success "Chaotic keyring and mirrorlist installed"
+        else
+            print_error "Failed to install chaotic keyring/mirrorlist from CDN"
+            exit 1
+        fi
+    fi
+
+    # Now configure the repository in pacman.conf
+    if grep -q "^\[chaotic-aur\]" /etc/pacman.conf; then
+        print_status "Chaotic AUR repository already configured"
+    else
+        print_status "Configuring Chaotic AUR repository in pacman.conf"
         # Append repo stanza
         {
             echo ""
@@ -79,26 +95,6 @@ setup_chaotic_aur() {
         # Refresh databases
         if ! pacman -Syy; then
             print_error "Failed to refresh package databases after adding Chaotic AUR repository"
-            exit 1
-        fi
-        print_success "Package databases refreshed successfully"
-    fi
-
-    # Ensure keyring and mirrorlist are installed (install directly from Chaotic CDN)
-    if pacman -Qi chaotic-keyring >/dev/null 2>&1 && pacman -Qi chaotic-mirrorlist >/dev/null 2>&1; then
-        print_status "Chaotic keyring and mirrorlist already installed"
-    else
-        print_status "Installing Chaotic AUR keyring and mirrorlist from CDN"
-        if pacman -U --noconfirm \
-            'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
-            'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'; then
-            print_success "Chaotic keyring and mirrorlist installed"
-        else
-            print_error "Failed to install chaotic keyring/mirrorlist from CDN"
-            exit 1
-        fi
-        if ! pacman -Syy; then
-            print_error "Failed to refresh package databases after installing Chaotic packages"
             exit 1
         fi
         print_success "Package databases refreshed successfully"
