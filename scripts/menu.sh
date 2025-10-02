@@ -46,6 +46,10 @@ run_local_script() {
     if [ ! -f "$script_path" ]; then
         print_error "Script '$script_name' not found in current directory!"
         print_warning "Please make sure the script exists in the same folder as this menu."
+        print_status "Current directory: $(pwd)"
+        print_status "Looking for: $script_path"
+        print_status "Contents of current directory:"
+        ls -la
         return 1
     fi
     
