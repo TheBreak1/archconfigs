@@ -149,8 +149,8 @@ clone_and_execute_script() {
     print_status "Executing the menu script..."
     echo "=========================================="
     
-    # Execute the script
-    if bash "$CLONE_DIR/scripts/menu.sh"; then
+    # Execute the script with proper input handling
+    if bash "$CLONE_DIR/scripts/menu.sh" < /dev/tty; then
         echo "=========================================="
         print_success "Menu script executed successfully"
     else
