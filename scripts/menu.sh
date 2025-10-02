@@ -41,11 +41,14 @@ show_header() {
 # Function to run a local script
 run_local_script() {
     local script_name="$1"
-    local script_path="./$script_name"
+    # Get the directory where this menu.sh script is located
+    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    local script_path="$script_dir/$script_name"
     
     if [ ! -f "$script_path" ]; then
-        print_error "Script '$script_name' not found in current directory!"
+        print_error "Script '$script_name' not found in script directory!"
         print_warning "Please make sure the script exists in the same folder as this menu."
+        print_status "Script directory: $script_dir"
         print_status "Current directory: $(pwd)"
         print_status "Looking for: $script_path"
         print_status "Contents of current directory:"
