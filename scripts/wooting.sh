@@ -26,7 +26,13 @@ print_error() {
 
 # Copy Wooting udev rules to system directory
 print_status "Copying Wooting udev rules..."
-sudo cp configs/70-wooting.rules /etc/udev/rules.d/
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get the parent directory (archconfigs root)
+ARCHCONFIGS_DIR="$(dirname "$SCRIPT_DIR")"
+
+sudo cp "$ARCHCONFIGS_DIR/configs/70-wooting.rules" /etc/udev/rules.d/
 sudo chmod 644 /etc/udev/rules.d/70-wooting.rules
 
 print_success "Wooting udev rules installed successfully!"
