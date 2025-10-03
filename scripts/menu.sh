@@ -33,7 +33,7 @@ show_header() {
     clear
     echo -e "${BLUE}"
     echo "=========================================="
-    echo "    9 EBU 4TO DELAETS9, EBANINA PLOTNA9
+    echo "    9 EBU 4TO DELAETS9, EBANINA PLOTNA9"
     echo "=========================================="
     echo -e "${NC}"
 }
