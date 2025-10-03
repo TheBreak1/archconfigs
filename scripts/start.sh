@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 # Configuration
 REPO_URL="https://github.com/TheBreak1/archconfigs.git"
 CLONE_DIR="/tmp/archconfigs"
-DEPENDENCIES=("wget" "git" "curl" "nano" "mc" "btop")  # Add your required dependencies
+DEPENDENCIES=("wget" "git" "curl" "nano" "mc" "btop" "man")  # Add your required dependencies
 
 # Function to print colored output
 print_status() {
@@ -39,7 +39,7 @@ print_error() {
 check_root() {
     if [[ $EUID -ne 0 ]]; then
         print_error "This script must be run as root or with sudo"
-        echo "Usage: sudo $0"
+        echo "Please refer to Github page for usage"
         exit 1
     fi
     print_success "Running with root privileges"

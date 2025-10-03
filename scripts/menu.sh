@@ -33,7 +33,7 @@ show_header() {
     clear
     echo -e "${BLUE}"
     echo "=========================================="
-    echo "       OBC & AFFILIATES ARCH SCRIPTS"
+    echo "    9 EBU 4TO DELAETS9, EBANINA PLOTNA9
     echo "=========================================="
     echo -e "${NC}"
 }
@@ -124,7 +124,6 @@ while true; do
             run_local_script "wooting.sh"
             ;;
         8)
-            print_success "Script terminated. GLHF"
             exit 0
             ;;
         *)

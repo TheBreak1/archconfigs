@@ -5,7 +5,7 @@ USER_HOME=$(eval echo "~${SUDO_USER}")
 
 # Get the directory where the script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CONFIGS_DIR="$SCRIPT_DIR/openbox"
+CONFIGS_DIR="$SCRIPT_DIR/../configs/desktop/openbox"
 
 install_desktop_components() {
     echo "Installing desktop components..."
