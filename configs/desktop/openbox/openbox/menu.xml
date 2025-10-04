@@ -1,97 +1,161 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<openbox_menu xmlns="https://openbox.org/" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://openbox.org/">
-  <menu id="root-menu" label="Applications">
-    <item label="Run osu!">
-      <action name="Execute">
-        <command>~/.local/bin/osu</command>
-      </action>
-    </item>
-    <item label="Run osu!lazer">
-      <action name="Execute">
-        <command>/usr/bin/osu-lazer</command>
-      </action>
-    </item>
-    <separator label="Programs"/>
-    <item label="File Manager">
-      <action name="Execute">
-        <command>xdg-open .</command>
-      </action>
-    </item>
-    <item label="Telegram">
-      <action name="Execute">
-        <command>telegram-desktop --</command>
-      </action>
-    </item>
-    <item label="Web Browser">
-      <action name="Execute">
-        <command>xdg-open http://</command>
-      </action>
-    </item>
-    <item label="Package Manager">
-      <action name="Execute">
-        <command>/usr/bin/octopi</command>
-      </action>
-    </item>
-    <item label="Run command">
-      <action name="Execute">
-        <command>rofi -show run</command>
-      </action>
-    </item>
-    <item label="Terminal">
-      <action name="Execute">
-        <command>alacritty</command>
-      </action>
-    </item>
-    <!--Can be Automagically updated with (AUR)obmenzu-generator but this will fuck up everything-->
-    <separator/>
-    <menu id="0.720188027754453" label="System Settings">
-      <item label="Open Tablet Driver">
-        <action name="Execute">
-          <command>otd-gui</command>
-        </action>
-      </item>
-      <item label="Appearance">
-        <action name="Execute">
-          <command>lxappearance</command>
-        </action>
-      </item>
-      <menu id="new_id" label="Open .osz with...">
-        <!--Here to select the default game to open osu! files with-->
-        <separator/>
-      </menu>
-      <menu id="0.701560194895819" label="Openbox">
-        <item label="Keybinds">
-          <action name="Execute">
-            <command>obkey</command>
-          </action>
-        </item>
-        <item label="Openbox Menu">
-          <action name="Execute">
-            <command>obmenu3</command>
-          </action>
-        </item>
-        <item label="Update Configs">
-          <action name="reconfigure"/>
-        </item>
-        <item label="Restart Openbox">
-          <action name="restart"/>
-        </item>
-      </menu>
-    </menu>
-    <separator/>
-    <item label="Log Out">
-      <action name="Exit"/>
-    </item>
-    <item label="Reboot">
-      <action name="Execute">
-        <command>systemctl reboot</command>
-      </action>
-    </item>
-    <item label="Shutdown">
-      <action name="Execute">
-        <command>systemctl poweroff</command>
-      </action>
-    </item>
-    <menu id="time" label="Time" execute="sh ~/.config/openbox/time-menu.sh"/>
-  </menu>
+<?xml version="1.0" encoding="utf-8"?>
+<openbox_menu xmlns="http://openbox.org/3.4/menu">
+	<menu id="root-menu" label="root-menu">
+		<item label="run osu!">
+			<action name="Execute">
+				<execute>command</execute>
+			</action>
+		</item>
+		<item label="run osu!lazer">
+			<action name="Execute">
+				<execute>osu-lazer</execute>
+			</action>
+		</item>
+		<separator/>
+		<item label="Browser">
+			<action name="Execute">
+				<execute>command</execute>
+			</action>
+		</item>
+		<item label="Telegram">
+			<action name="Execute">
+				<execute>command</execute>
+			</action>
+		</item>
+		<item label="Discord">
+			<action name="Execute">
+				<execute>command</execute>
+			</action>
+		</item>
+		<menu id="None-845856-66334" label="Programs">
+			<item label="Terminal">
+				<action name="Execute">
+					<execute>alacritty</execute>
+				</action>
+			</item>
+			<item label="File Manager">
+				<action name="Execute">
+					<execute>nemo</execute>
+				</action>
+			</item>
+			<item label="Notepad">
+				<action name="Execute">
+					<execute>mousepad</execute>
+				</action>
+			</item>
+		</menu>
+		<menu id="None-845856-33452" label="Settings">
+			<menu id="None-845856-33452-254714" label="Looks">
+				<item label="GTK Themes">
+					<action name="Execute">
+						<execute>command</execute>
+					</action>
+				</item>
+				<item label="Qt Themes">
+					<action name="Execute">
+						<execute>command</execute>
+					</action>
+				</item>
+				<item label="Rofi Themes">
+					<action name="Execute">
+						<execute>rofi-theme-selector</execute>
+					</action>
+				</item>
+				<item label="Wallpaper">
+					<action name="Execute">
+						<execute>command</execute>
+					</action>
+				</item>
+			</menu>
+			<menu id="None-845856-33452-711151" label="System">
+				<item label="Video">
+					<action name="Execute">
+						<execute>sudo lxrandr</execute>
+					</action>
+				</item>
+				<item label="Nvidia">
+					<action name="Execute">
+						<execute>command</execute>
+					</action>
+				</item>
+				<item label="Audio">
+					<action name="Execute">
+						<execute>pavucontrol</execute>
+					</action>
+				</item>
+				<item label="Drives">
+					<action name="Execute">
+						<execute>gparted</execute>
+					</action>
+				</item>
+				<item label="CPU Monitoring">
+					<action name="Execute">
+						<execute>alacritty -e btop</execute>
+					</action>
+				</item>
+				<item label="GPU Monitoring">
+					<action name="Execute">
+						<execute>alacritty -e nvtop</execute>
+					</action>
+				</item>
+			</menu>
+			<menu id="None-845856-33452-671159" label="Openbox">
+				<item label="Appearance">
+					<action name="Execute">
+						<execute>lxappearance</execute>
+					</action>
+				</item>
+				<item label="This Menu">
+					<action name="Execute">
+						<execute>obmenu</execute>
+					</action>
+				</item>
+				<item label="Keybinds">
+					<action name="Execute">
+						<execute>obkey</execute>
+					</action>
+				</item>
+				<separator/>
+				<item label="Reconfigure Openbox">
+					<action name="Reconfigure"/>
+				</item>
+				<item label="Restart Openbox">
+					<action name="Restart"/>
+				</item>
+			</menu>
+			<item label="OpenTabletDriver">
+				<action name="Execute">
+					<execute>otd-gui</execute>
+				</action>
+			</item>
+			<menu id="None-845856-33452-321051" label="Open .osu with...">
+				<item label="Stable">
+					<action name="Execute">
+						<execute>command</execute>
+					</action>
+				</item>
+				<item label="Lazer">
+					<action name="Execute">
+						<execute>command</execute>
+					</action>
+				</item>
+			</menu>
+		</menu>
+		<separator/>
+		<menu id="None-845856-42424" label="Power">
+			<item label="Log Out">
+				<action name="Exit"/>
+			</item>
+			<item label="Reboot">
+				<action name="Execute">
+					<execute>command</execute>
+				</action>
+			</item>
+			<item label="Shutdown">
+				<action name="Execute">
+					<execute>command</execute>
+				</action>
+			</item>
+		</menu>
+	</menu>
 </openbox_menu>
