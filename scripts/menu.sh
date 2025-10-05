@@ -79,7 +79,7 @@ run_local_script() {
     return $exit_code
 }
 
-# Function to show main menu
+# Function to show main menu. ADD NEW SCRIPTS HERE.
 show_menu() {
     echo -e "${BLUE}Available Scripts:${NC}"
     echo -e "${GREEN}1.${NC} Install i3 desktop"
@@ -93,7 +93,7 @@ show_menu() {
     echo -e "${BLUE}==========================================${NC}"
 }
 
-# Main program loop
+# Main program loop. ADD NEW SCRIPTS HERE.
 while true; do
     show_header
     show_menu

@@ -46,7 +46,7 @@ install_desktop_components() {
 install_applications() {
     echo "Installing applications..."
     #Then installing these things:
-    pacman -S --noconfirm chromium telegram-desktop discord brightnessctl mousepad nemo pavucontrol qt5ct
+    pacman -S --noconfirm chromium telegram-desktop discord brightnessctl mousepad nemo pavucontrol qt5ct nvidia-settings
 }
 
 pacman -Sy

@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <openbox_config xmlns="http://openbox.org/3.4/rc" xmlns:xi="http://www.w3.org/2001/XInclude">
   <resistance>
     <strength>10</strength>
@@ -39,7 +40,7 @@
                   'Active' - where the active window is -->
   </placement>
   <theme>
-    <name>Adapta-Nokto</name>
+    <name>Artwiz-boxed</name>
     <titleLayout>NLIMC</titleLayout>
     <!--
       available characters are NDSLIMC, each can occur at most once.
@@ -178,11 +179,6 @@
     <keybind key="C-A-Left">
       <action name="GoToDesktop"/>
     </keybind>
-    <keybind key="W-Tab">
-      <action name="Execute">
-        <command>rofi -show window</command>
-      </action>
-    </keybind>
     <keybind key="C-A-Right">
       <action name="GoToDesktop"/>
     </keybind>
@@ -233,14 +229,10 @@
       </action>
     </keybind>
     <keybind key="A-Tab">
-      <action name="NextWindow">
-        <bar>no</bar>
-      </action>
+      <action name="NextWindow"/>
     </keybind>
     <keybind key="A-S-Tab">
-      <action name="PreviousWindow">
-        <bar>no</bar>
-      </action>
+      <action name="PreviousWindow"/>
     </keybind>
     <keybind key="C-A-Tab">
       <action name="NextWindow">
@@ -248,54 +240,44 @@
         <desktop>yes</desktop>
       </action>
     </keybind>
-    <keybind key="W-r">
-      <action name="Execute">
-        <command>rofi -show run</command>
-        <startupnotify>
-          <enabled>yes</enabled>
-          <name>Konqueror</name>
-        </startupnotify>
-      </action>
+    <keybind key="W-S-Right">
+      <action name="DirectionalCycleWindows"/>
     </keybind>
-    <keybind key="W-grave">
-      <action name="Execute">
-        <command>alacritty</command>
-      </action>
+    <keybind key="W-S-Left">
+      <action name="DirectionalCycleWindows"/>
+    </keybind>
+    <keybind key="W-S-Up">
+      <action name="DirectionalCycleWindows"/>
+    </keybind>
+    <keybind key="W-S-Down">
+      <action name="DirectionalCycleWindows"/>
     </keybind>
     <keybind key="W-space">
       <action name="Execute">
         <command>rofi -show drun</command>
       </action>
     </keybind>
-    <keybind key="W-Up">
-      <action name="MaximizeFull"/>
-    </keybind>
-    <keybind key="W-Down">
-      <action name="Iconify"/>
-    </keybind>
-    <keybind key="XF86AudioRaiseVolume">
+    <keybind key="W-f">
       <action name="Execute">
-        <command>pactl set-sink-volume @DEFAULT_SINK@ +5%</command>
+        <command>nemo</command>
       </action>
     </keybind>
-    <keybind key="XF86AudioLowerVolume">
+    <keybind key="W-t">
       <action name="Execute">
-        <command>pactl set-sink-volume @DEFAULT_SINK@ -5%</command>
+        <command>alacritty</command>
       </action>
     </keybind>
-    <keybind key="XF86AudioMute">
+    <keybind key="W-w">
       <action name="Execute">
-        <command>pactl set-sink-mute @DEFAULT_SINK@ toggle</command>
+        <command>chromium</command>
       </action>
     </keybind>
-    <keybind key="XF86MonBrightnessDown">
-      <action name="Execute">
-        <command>brightnessctl s 5%-</command>
-      </action>
+    <keybind key="W-c">
+      <action name="Close"/>
     </keybind>
-    <keybind key="XF86MonBrightnessUp">
+    <keybind key="W-r">
       <action name="Execute">
-        <command>brightnessctl s +5%</command>
+        <command>rofi -show run</command>
       </action>
     </keybind>
   </keyboard>

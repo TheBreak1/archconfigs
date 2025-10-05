@@ -14,17 +14,17 @@
 		<separator/>
 		<item label="Browser">
 			<action name="Execute">
-				<execute>command</execute>
+				<execute>chromium</execute>
 			</action>
 		</item>
 		<item label="Telegram">
 			<action name="Execute">
-				<execute>command</execute>
+				<execute>Telegram -- %u</execute>
 			</action>
 		</item>
 		<item label="Discord">
 			<action name="Execute">
-				<execute>command</execute>
+				<execute>discord</execute>
 			</action>
 		</item>
 		<menu id="None-845856-66334" label="Programs">
@@ -48,12 +48,12 @@
 			<menu id="None-845856-33452-254714" label="Looks">
 				<item label="GTK Themes">
 					<action name="Execute">
-						<execute>command</execute>
+						<execute>lxappearance</execute>
 					</action>
 				</item>
 				<item label="Qt Themes">
 					<action name="Execute">
-						<execute>command</execute>
+						<execute>qt5ct</execute>
 					</action>
 				</item>
 				<item label="Rofi Themes">
@@ -63,19 +63,19 @@
 				</item>
 				<item label="Wallpaper">
 					<action name="Execute">
-						<execute>command</execute>
+						<execute>nitrogen</execute>
 					</action>
 				</item>
 			</menu>
 			<menu id="None-845856-33452-711151" label="System">
 				<item label="Video">
 					<action name="Execute">
-						<execute>sudo lxrandr</execute>
+						<execute>lxrandr</execute>
 					</action>
 				</item>
 				<item label="Nvidia">
 					<action name="Execute">
-						<execute>command</execute>
+						<execute>nvidia-settings</execute>
 					</action>
 				</item>
 				<item label="Audio">
@@ -85,7 +85,7 @@
 				</item>
 				<item label="Drives">
 					<action name="Execute">
-						<execute>gparted</execute>
+						<execute>alacritty -e pkexec gparted</execute>
 					</action>
 				</item>
 				<item label="CPU Monitoring">
@@ -148,12 +148,12 @@
 			</item>
 			<item label="Reboot">
 				<action name="Execute">
-					<execute>command</execute>
+					<execute>systemctl reboot</execute>
 				</action>
 			</item>
 			<item label="Shutdown">
 				<action name="Execute">
-					<execute>command</execute>
+					<execute>systemctl poweroff</execute>
 				</action>
 			</item>
 		</menu>

@@ -24,6 +24,24 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+# Retry helper for paru installs to mitigate transient network/EOF errors
+install_with_retry() {
+    local attempts=0
+    local max_attempts=3
+    local delay_seconds=5
+
+    while (( attempts < max_attempts )); do
+        paru -S --noconfirm --needed "$@" && return 0
+        attempts=$((attempts + 1))
+        if (( attempts < max_attempts )); then
+            print_warning "Install failed (attempt ${attempts}/${max_attempts}). Retrying in ${delay_seconds}s..."
+            sleep "${delay_seconds}"
+        fi
+    done
+
+    return 1
+}
+
 # Check if paru is installed
 if ! command -v paru &> /dev/null; then
     print_error "paru is not installed when it should be. Please restart the script or install it manually."
@@ -62,13 +80,22 @@ case $choice in
         ;;
 esac
 
-# Install the chosen package, osu-handler, and osu-mime using paru
-print_status "Installing packages with paru..."
-paru -S --noconfirm --needed "$package" osu-handler osu-mime
+# Refresh package databases (helps with mirror issues)
+print_status "Refreshing package databases..."
+sudo pacman -Syy --noconfirm || true
 
-echo ""
-print_success "Installation complete!"
-print_status "Installed packages:"
-echo -e "${GREEN}-${NC} $package"
-echo -e "${GREEN}-${NC} osu-handler"
-echo -e "${GREEN}-${NC} osu-mime"
+# Install the chosen package, osu-handler, and osu-mime using paru with retries
+print_status "Installing packages with paru..."
+if install_with_retry "$package" osu-handler osu-mime; then
+    echo ""
+    print_success "Installation complete!"
+    print_status "Installed packages:"
+    echo -e "${GREEN}-${NC} $package"
+    echo -e "${GREEN}-${NC} osu-handler"
+    echo -e "${GREEN}-${NC} osu-mime"
+else
+    echo ""
+    print_error "Installation failed after multiple attempts. This may be a temporary network or AUR issue."
+    print_status "Tips: check internet connectivity, update ca-certificates, or try again later."
+    exit 1
+fi
