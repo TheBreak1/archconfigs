@@ -1,7 +1,15 @@
 #!/bin/bash
 
 # Get the original user who invoked sudo
+if [[ -z "$SUDO_USER" ]]; then
+    echo "Error: SUDO_USER is not set. This script must be run with sudo."
+    echo "Please run this script through the menu.sh or with sudo directly."
+    exit 1
+fi
+
 USER_HOME=$(eval echo "~${SUDO_USER}")
+echo "Detected user: $SUDO_USER"
+echo "User home directory: $USER_HOME"
 
 # Get the directory where the script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
