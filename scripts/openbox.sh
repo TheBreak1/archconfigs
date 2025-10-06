@@ -120,12 +120,43 @@ install_desktop_components() {
 
     echo "Enabling ly display manager (no immediate start)"
     systemctl enable ly
+
+    # Configure ly animation if config exists
+    LY_CONF="/etc/ly/config.ini"
+    if [ -f "$LY_CONF" ]; then
+        echo "Found ly config: $LY_CONF"
+        echo "Checking animation setting..."
+        if grep -qE '^\s*animation\s*=\s*none\s*$' "$LY_CONF"; then
+            echo "Updating 'animation = none' -> 'animation = colormix'"
+            sed -i 's/^\s*animation\s*=\s*none\s*$/animation = colormix/' "$LY_CONF"
+        else
+            if grep -qE '^\s*animation\s*=' "$LY_CONF"; then
+                echo "Setting existing animation to colormix"
+                sed -i 's/^\s*animation\s*=.*/animation = colormix/' "$LY_CONF"
+            else
+                echo "Appending animation = colormix"
+                printf '\nanimation = colormix\n' >> "$LY_CONF"
+            fi
+        fi
+        echo "ly animation set to colormix (takes effect on next ly start)"
+    else
+        echo "ly config not found at $LY_CONF; skipping animation change"
+    fi
 }
 
 install_applications() {
     echo "Installing applications..."
     #Then installing these things:
     pacman -S --noconfirm --needed chromium telegram-desktop discord brightnessctl mousepad nemo pavucontrol qt5ct nvidia-settings
+
+    echo "Attempting to install AUR packages with paru (as $TARGET_USER)"
+    if command -v paru >/dev/null 2>&1; then
+        echo "paru found at $(command -v paru)"
+        echo "Installing: obkey obmenu"
+        sudo -u "$TARGET_USER" HOME="$TARGET_HOME" paru -S --noconfirm --needed obkey obmenu || echo "Warning: paru installation of obkey/obmenu failed"
+    else
+        echo "paru not found; skipping AUR install of obkey and obmenu"
+    fi
 }
 
 pacman -Sy
