@@ -15,31 +15,46 @@ install_desktop_components() {
     # Move config files if configs directory exists
     if [ -d "$CONFIGS_DIR" ]; then
         echo "Moving configuration files to $USER_HOME/.config/"
+        echo "Source directory: $CONFIGS_DIR"
         
         # Copy openbox config (from openbox/openbox/)
-        if [ -d "$CONFIGS_DIR/openbox" ]; then
+        if [ -d "$CONFIGS_DIR/openbox/openbox" ]; then
+            echo "Copying openbox config from: $CONFIGS_DIR/openbox/openbox/"
             mkdir -p "$USER_HOME/.config/openbox"
-            cp -r "$CONFIGS_DIR/openbox/"* "$USER_HOME/.config/openbox/"
+            cp -r "$CONFIGS_DIR/openbox/openbox/"* "$USER_HOME/.config/openbox/"
             chown -R ${SUDO_USER}:${SUDO_USER} "$USER_HOME/.config/openbox"
+            echo "Openbox config copied successfully"
+        else
+            echo "Warning: Openbox config directory not found at: $CONFIGS_DIR/openbox/openbox"
         fi
         
         # Copy gtk-3.0 config
         if [ -d "$CONFIGS_DIR/gtk-3.0" ]; then
+            echo "Copying gtk-3.0 config from: $CONFIGS_DIR/gtk-3.0/"
             mkdir -p "$USER_HOME/.config/gtk-3.0"
             cp -r "$CONFIGS_DIR/gtk-3.0/"* "$USER_HOME/.config/gtk-3.0/"
             chown -R ${SUDO_USER}:${SUDO_USER} "$USER_HOME/.config/gtk-3.0"
+            echo "GTK-3.0 config copied successfully"
+        else
+            echo "Warning: GTK-3.0 config directory not found at: $CONFIGS_DIR/gtk-3.0"
         fi
         
         # Copy rofi config
         if [ -d "$CONFIGS_DIR/rofi" ]; then
+            echo "Copying rofi config from: $CONFIGS_DIR/rofi/"
             mkdir -p "$USER_HOME/.config/rofi"
             cp -r "$CONFIGS_DIR/rofi/"* "$USER_HOME/.config/rofi/"
             chown -R ${SUDO_USER}:${SUDO_USER} "$USER_HOME/.config/rofi"
+            echo "Rofi config copied successfully"
+        else
+            echo "Warning: Rofi config directory not found at: $CONFIGS_DIR/rofi"
         fi
         
-        echo "Configuration files copied successfully!"
+        echo "Configuration files copying completed!"
     else
-        echo "Configs directory not found at: $CONFIGS_DIR"
+        echo "Error: Configs directory not found at: $CONFIGS_DIR"
+        echo "Current working directory: $(pwd)"
+        echo "Script directory: $SCRIPT_DIR"
     fi
 }
 
