@@ -54,9 +54,9 @@ install_desktop_components() {
         echo "Listing source tree:"
         find "$CONFIGS_DIR" -maxdepth 3 -type d -print | sed 's/^/  - /'
         
-        # Copy openbox config (from openbox/openbox/)
-        if [ -d "$CONFIGS_DIR/openbox/openbox" ]; then
-            SRC_DIR="$CONFIGS_DIR/openbox/openbox"
+        # Copy openbox config (from openbox/)
+        if [ -d "$CONFIGS_DIR/openbox" ]; then
+            SRC_DIR="$CONFIGS_DIR/openbox"
             DST_DIR="$TARGET_HOME/.config/openbox"
             echo "[DEBUG] Copying Openbox config"
             echo "  - from: $SRC_DIR"
@@ -70,7 +70,7 @@ install_desktop_components() {
             echo "  - contents of dst:"
             ls -la "$DST_DIR"
         else
-            echo "Warning: Openbox config directory not found at: $CONFIGS_DIR/openbox/openbox"
+            echo "Warning: Openbox config directory not found at: $CONFIGS_DIR/openbox"
         fi
         
         # Copy gtk-3.0 config
