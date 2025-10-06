@@ -3,6 +3,30 @@
 set -euo pipefail
 shopt -s dotglob nullglob
 
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Function to print colored output
+print_status() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+print_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
 # Get the original user who invoked sudo
 if [[ $EUID -ne 0 ]]; then
     echo "Error: This script must be run as root (use sudo)." >&2
@@ -49,117 +73,106 @@ install_desktop_components() {
     
     # Move config files if configs directory exists
     if [ -d "$CONFIGS_DIR" ]; then
-        echo "Moving configuration files to $TARGET_HOME/.config/"
-        echo "Source directory: $CONFIGS_DIR"
-        echo "Listing source tree:"
-        find "$CONFIGS_DIR" -maxdepth 3 -type d -print | sed 's/^/  - /'
+        print_status "Moving configuration files to $TARGET_HOME/.config/"
         
         # Copy openbox config (from openbox/)
         if [ -d "$CONFIGS_DIR/openbox" ]; then
             SRC_DIR="$CONFIGS_DIR/openbox"
             DST_DIR="$TARGET_HOME/.config/openbox"
-            echo "[DEBUG] Copying Openbox config"
-            echo "  - from: $SRC_DIR"
-            echo "  - to  : $DST_DIR"
-            echo "  - contents of src:"
-            ls -la "$SRC_DIR"
             install -d -m 0755 -o "$TARGET_UID" -g "$TARGET_GID" "$DST_DIR"
             cp -av "$SRC_DIR/." "$DST_DIR/"
             chown -R "$TARGET_UID":"$TARGET_GID" "$DST_DIR"
-            echo "[OK] Openbox config copied to $DST_DIR"
-            echo "  - contents of dst:"
-            ls -la "$DST_DIR"
+            print_success "Openbox config copied to $DST_DIR"
         else
-            echo "Warning: Openbox config directory not found at: $CONFIGS_DIR/openbox"
+            print_warning "Openbox config directory not found at: $CONFIGS_DIR/openbox"
         fi
         
         # Copy gtk-3.0 config
         if [ -d "$CONFIGS_DIR/gtk-3.0" ]; then
             SRC_DIR="$CONFIGS_DIR/gtk-3.0"
             DST_DIR="$TARGET_HOME/.config/gtk-3.0"
-            echo "[DEBUG] Copying GTK-3.0 config"
-            echo "  - from: $SRC_DIR"
-            echo "  - to  : $DST_DIR"
-            echo "  - contents of src:"
-            ls -la "$SRC_DIR"
             install -d -m 0755 -o "$TARGET_UID" -g "$TARGET_GID" "$DST_DIR"
             cp -av "$SRC_DIR/." "$DST_DIR/"
             chown -R "$TARGET_UID":"$TARGET_GID" "$DST_DIR"
-            echo "[OK] GTK-3.0 config copied to $DST_DIR"
-            echo "  - contents of dst:"
-            ls -la "$DST_DIR"
+            print_success "GTK-3.0 config copied to $DST_DIR"
         else
-            echo "Warning: GTK-3.0 config directory not found at: $CONFIGS_DIR/gtk-3.0"
+            print_warning "GTK-3.0 config directory not found at: $CONFIGS_DIR/gtk-3.0"
         fi
         
         # Copy rofi config
         if [ -d "$CONFIGS_DIR/rofi" ]; then
             SRC_DIR="$CONFIGS_DIR/rofi"
             DST_DIR="$TARGET_HOME/.config/rofi"
-            echo "[DEBUG] Copying Rofi config"
-            echo "  - from: $SRC_DIR"
-            echo "  - to  : $DST_DIR"
-            echo "  - contents of src:"
-            ls -la "$SRC_DIR"
             install -d -m 0755 -o "$TARGET_UID" -g "$TARGET_GID" "$DST_DIR"
             cp -av "$SRC_DIR/." "$DST_DIR/"
             chown -R "$TARGET_UID":"$TARGET_GID" "$DST_DIR"
-            echo "[OK] Rofi config copied to $DST_DIR"
-            echo "  - contents of dst:"
-            ls -la "$DST_DIR"
+            print_success "Rofi config copied to $DST_DIR"
         else
-            echo "Warning: Rofi config directory not found at: $CONFIGS_DIR/rofi"
+            print_warning "Rofi config directory not found at: $CONFIGS_DIR/rofi"
         fi
         
-        echo "Configuration files copying completed!"
+        print_success "Configuration files copying completed!"
     else
-        echo "Error: Configs directory not found at: $CONFIGS_DIR"
-        echo "Current working directory: $(pwd)"
-        echo "Script directory: $SCRIPT_DIR"
+        print_error "Configs directory not found at: $CONFIGS_DIR"
+        print_status "Current working directory: $(pwd)"
+        print_status "Script directory: $SCRIPT_DIR"
     fi
 
-    echo "Enabling ly display manager (no immediate start)"
+    print_status "Enabling ly display manager (no immediate start)"
     systemctl enable ly
 
     # Configure ly animation if config exists
     LY_CONF="/etc/ly/config.ini"
     if [ -f "$LY_CONF" ]; then
-        echo "Found ly config: $LY_CONF"
-        echo "Checking animation setting..."
+        print_status "Found ly config: $LY_CONF"
+        print_status "Checking animation setting..."
         if grep -qE '^\s*animation\s*=\s*none\s*$' "$LY_CONF"; then
-            echo "Updating 'animation = none' -> 'animation = colormix'"
+            print_status "Updating 'animation = none' -> 'animation = colormix'"
             sed -i 's/^\s*animation\s*=\s*none\s*$/animation = colormix/' "$LY_CONF"
         else
             if grep -qE '^\s*animation\s*=' "$LY_CONF"; then
-                echo "Setting existing animation to colormix"
+                print_status "Setting existing animation to colormix"
                 sed -i 's/^\s*animation\s*=.*/animation = colormix/' "$LY_CONF"
             else
-                echo "Appending animation = colormix"
+                print_status "Appending animation = colormix"
                 printf '\nanimation = colormix\n' >> "$LY_CONF"
             fi
         fi
-        echo "ly animation set to colormix (takes effect on next ly start)"
+        print_success "ly animation set to colormix (takes effect on next ly start)"
     else
-        echo "ly config not found at $LY_CONF; skipping animation change"
+        print_warning "ly config not found at $LY_CONF; skipping animation change"
     fi
 }
 
 install_applications() {
-    echo "Installing applications..."
+    print_status "Installing applications..."
     #Then installing these things:
     pacman -S --noconfirm --needed chromium telegram-desktop discord brightnessctl mousepad nemo pavucontrol qt5ct nvidia-settings
 
-    echo "Attempting to install AUR packages with paru (as $TARGET_USER)"
-    if command -v paru >/dev/null 2>&1; then
-        echo "paru found at $(command -v paru)"
-        echo "Installing: obkey obmenu"
-        sudo -u "$TARGET_USER" HOME="$TARGET_HOME" paru -S --noconfirm --needed obkey obmenu || echo "Warning: paru installation of obkey/obmenu failed"
+    # Ask user if they want to install AUR packages
+    echo -e "${BLUE}==========================================${NC}"
+    echo -e "${YELLOW}Openbox Configuration Apps Installation${NC}"
+    echo -e "${BLUE}==========================================${NC}"
+    echo -e "${GREEN}AUR packages for installation:${NC} obkey obmenu"
+    echo -e "${YELLOW}Do you want to install AUR packages? (y/n):${NC} "
+    echo -e "${YELLOW}This may take VERY long time, come back to it later!${NC} "
+    read -r install_aur
+    
+    if [[ "$install_aur" =~ ^[Yy]$ ]]; then
+        print_status "Attempting to install AUR packages with paru (as $TARGET_USER)"
+        if command -v paru >/dev/null 2>&1; then
+            print_status "paru found at $(command -v paru)"
+            print_status "Installing: obkey obmenu"
+            sudo -u "$TARGET_USER" HOME="$TARGET_HOME" paru -S --noconfirm --needed obkey obmenu || print_warning "paru installation of obkey/obmenu failed"
+        else
+            print_warning "paru not found; skipping AUR install of obkey and obmenu"
+        fi
     else
-        echo "paru not found; skipping AUR install of obkey and obmenu"
+        print_status "Skipping AUR package installation"
     fi
 }
 
 pacman -Sy
 install_desktop_components
 install_applications
-echo "Done!"
+print_success "Done!"
