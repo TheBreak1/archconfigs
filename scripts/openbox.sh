@@ -18,7 +18,7 @@ CONFIGS_DIR="$SCRIPT_DIR/../configs/desktop/openbox"
 install_desktop_components() {
     echo "Installing desktop components..."
     # Installing base desktop:
-    pacman -S --noconfirm openbox ly alacritty rofi adapta-gtk-theme noto-fonts lxappearance lxappearance-obconf nitrogen
+    pacman -S --noconfirm --needed openbox ly alacritty rofi adapta-gtk-theme noto-fonts lxappearance lxappearance-obconf nitrogen
     
     # Move config files if configs directory exists
     if [ -d "$CONFIGS_DIR" ]; then
@@ -69,7 +69,7 @@ install_desktop_components() {
 install_applications() {
     echo "Installing applications..."
     #Then installing these things:
-    pacman -S --noconfirm chromium telegram-desktop discord brightnessctl mousepad nemo pavucontrol qt5ct nvidia-settings
+    pacman -S --noconfirm --needed chromium telegram-desktop discord brightnessctl mousepad nemo pavucontrol qt5ct nvidia-settings
 }
 
 pacman -Sy
