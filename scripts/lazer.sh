@@ -81,16 +81,30 @@ esac
 print_status "Refreshing package databases..."
 sudo pacman -Syy --noconfirm || true
 
-# Install the chosen package, osu-handler, and osu-mime using paru (single attempt)
+# Install the chosen package and osu-mime using paru (single attempt)
 print_status "Installing packages with paru..."
-if run_paru -S --noconfirm --needed "$package" osu-mime; then
-    echo ""
-    print_success "Installation complete!"
-    print_status "Installed packages:"
-    echo -e "${GREEN}-${NC} $package"
-    echo -e "${GREEN}-${NC} osu-mime"
+if [ "$EUID" -eq 0 ]; then
+    if sudo -H -u "$SUDO_USER" --preserve-env=PATH,XDG_CACHE_HOME,XDG_CONFIG_HOME paru -S --noconfirm --needed "$package" osu-mime; then
+        echo ""
+        print_success "Installation complete!"
+        print_status "Installed packages:"
+        echo -e "${GREEN}-${NC} $package"
+        echo -e "${GREEN}-${NC} osu-mime"
+    else
+        echo ""
+        print_error "Installation failed. See Applist.md for manual installation."
+        exit 1
+    fi
 else
-    echo ""
-    print_error "Installation failed. See Applist.md for manual installation."
-    exit 1
+    if paru -S --noconfirm --needed "$package" osu-mime; then
+        echo ""
+        print_success "Installation complete!"
+        print_status "Installed packages:"
+        echo -e "${GREEN}-${NC} $package"
+        echo -e "${GREEN}-${NC} osu-mime"
+    else
+        echo ""
+        print_error "Installation failed. See Applist.md for manual installation."
+        exit 1
+    fi
 fi
