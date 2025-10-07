@@ -90,7 +90,7 @@ install_packages() {
     print_status "Installing i3 window manager and related packages..."
     
     # Package list
-    packages=("dmenu" "i3-wm" "i3blocks" "i3lock" "i3status" "lightdm" "lightdm-gtk-greeter" "xss-lock" "xterm" "kitty" "nemo" "flameshot" "chromium")
+    packages=("dmenu" "i3-wm" "i3blocks" "i3lock" "i3status" "lightdm" "lightdm-gtk-greeter" "rofi" "xss-lock" "xterm" "kitty" "nemo" "flameshot" "chromium")
     
     # Install all packages in a single command
     print_status "Installing packages: ${packages[*]}"

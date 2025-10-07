@@ -24,23 +24,20 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Retry helper for paru installs to mitigate transient network/EOF errors
-install_with_retry() {
-    local attempts=0
-    local max_attempts=3
-    local delay_seconds=5
-
-    while (( attempts < max_attempts )); do
-        paru -S --noconfirm --needed "$@" && return 0
-        attempts=$((attempts + 1))
-        if (( attempts < max_attempts )); then
-            print_warning "Install failed (attempt ${attempts}/${max_attempts}). Retrying in ${delay_seconds}s..."
-            sleep "${delay_seconds}"
+# Ensure paru runs as the invoking non-root user if this script is executed with sudo
+run_paru() {
+    if [ "$EUID" -eq 0 ]; then
+        if [ -z "$SUDO_USER" ]; then
+            print_error "Running as root but SUDO_USER is not set. Cannot execute paru as root."
+            exit 1
         fi
-    done
-
-    return 1
+        sudo -u "$SUDO_USER" paru "$@"
+    else
+        paru "$@"
+    fi
 }
+
+# (no retry logic needed)
 
 # Check if paru is installed
 if ! command -v paru &> /dev/null; then
@@ -84,9 +81,9 @@ esac
 print_status "Refreshing package databases..."
 sudo pacman -Syy --noconfirm || true
 
-# Install the chosen package, osu-handler, and osu-mime using paru with retries
+# Install the chosen package, osu-handler, and osu-mime using paru (single attempt)
 print_status "Installing packages with paru..."
-if install_with_retry "$package" osu-handler osu-mime; then
+if run_paru -S --noconfirm --needed "$package" osu-handler osu-mime; then
     echo ""
     print_success "Installation complete!"
     print_status "Installed packages:"
@@ -95,7 +92,7 @@ if install_with_retry "$package" osu-handler osu-mime; then
     echo -e "${GREEN}-${NC} osu-mime"
 else
     echo ""
-    print_error "Installation failed after multiple attempts. This may be a temporary network or AUR issue."
+    print_error "Installation failed. This may be a temporary network or AUR issue."
     print_status "Tips: check internet connectivity, update ca-certificates, or try again later."
     exit 1
 fi
