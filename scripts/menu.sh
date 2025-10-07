@@ -108,6 +108,7 @@ run_local_script_user() {
     # Check if we're running as root and need to switch to the original user
     if [ "$EUID" -eq 0 ] && [ -n "$SUDO_USER" ]; then
         print_status "Switching to user: $SUDO_USER"
+        print_warning "Please look after the password prompts!"
         # Execute the script as the original user who ran sudo
         sudo -u "$SUDO_USER" "$script_path"
     else
