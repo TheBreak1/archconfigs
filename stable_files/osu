@@ -5,13 +5,18 @@ export PATH="$HOME/wine-osu/bin:$PATH" #custom WINE new
 export WINEARCH=win32
 export WINEPREFIX="$HOME/.wineosu"
 export WINEFSYNC=1
+export WINE_DISABLE_VK_CHILD_WINDOW_RENDERING_HACK=1
 
-export STAGING_AUDIO_DURATION=13333 #1.333ms at 48KHz
-export STAGING_AUDIO_PERIOD=13333 #1.333ms at 48KHz
+export STAGING_AUDIO_DURATION=13333
+export STAGING_AUDIO_PERIOD=13333
 
 #export vblank_mode=0 #For AMD, Intel and others
+
 export __GL_SYNC_TO_VBLANK=0 #For NVIDIA 
+export __GL_MaxFramesAllowed=0
+export __GL_THREADED_OPTIMIZATIONS=1 
+
 
 cd ~/osu
 #wine --version
-wine "osu!.exe" #-devserver gatari.pw
+wine "osu!.exe"

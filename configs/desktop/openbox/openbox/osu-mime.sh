@@ -1,8 +1,9 @@
 #!/bin/bash
 
-# Placeholder script for osu-mime configuration
+# Placeholder script for osu! MIME types configuration
 # Goal is to make a script that changes opening osu! files between stable and lazer
-# This should be divided into two separate scripts later for each menu button.
+# TODO: arguments --stable and --lazer
+# TODO: this needs to be worked on when both are installed, I can't be bothered with stable.
 
 # Function to show error dialog
 show_hello_world() {

@@ -1,0 +1,150 @@
+#!/bin/bash
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Function to print colored output
+print_status() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+print_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Function to manage pipewire session manager
+manage_pipewire_session() {
+    print_status "Managing pipewire session manager..."
+    
+    # Remove wireplumber if installed
+    if pacman -Q wireplumber >/dev/null 2>&1; then
+        print_status "Removing wireplumber..."
+        if pacman -R --noconfirm wireplumber; then
+            print_success "wireplumber removed successfully"
+        else
+            print_error "Failed to remove wireplumber"
+            return 1
+        fi
+    else
+        print_warning "wireplumber is not installed"
+    fi
+    
+    # Install pipewire-media-session
+    print_status "Installing pipewire-media-session..."
+    if pacman -S --noconfirm pipewire-media-session; then
+        print_success "pipewire-media-session installed successfully"
+    else
+        print_error "Failed to install pipewire-media-session"
+        return 1
+    fi
+    
+    # Enable the service (run as the actual user, not root)
+    print_status "Enabling pipewire-media-session service..."
+    if sudo -u "$SUDO_USER" systemctl --user enable pipewire-media-session.service; then
+        print_success "pipewire-media-session service enabled"
+    else
+        print_error "Failed to enable pipewire-media-session service"
+        return 1
+    fi
+}
+
+# Function to copy pipewire configuration files
+copy_pipewire_configs() {
+    print_status "Copying pipewire configuration files to user config..."
+    
+    # Create ~/.config/pipewire directory if it doesn't exist
+    if [[ ! -d "$HOME/.config/pipewire" ]]; then
+        print_status "Creating ~/.config/pipewire directory..."
+        if mkdir -p "$HOME/.config/pipewire"; then
+            print_success "~/.config/pipewire directory created"
+        else
+            print_error "Failed to create ~/.config/pipewire directory"
+            return 1
+        fi
+    else
+        print_warning "~/.config/pipewire directory already exists"
+    fi
+    
+    # Copy configuration files from system directory
+    if [[ -d "/usr/share/pipewire" ]]; then
+        print_status "Copying files from /usr/share/pipewire to ~/.config/pipewire..."
+        if cp -r /usr/share/pipewire/* "$HOME/.config/pipewire/"; then
+            print_success "Pipewire configuration files copied successfully"
+        else
+            print_error "Failed to copy pipewire configuration files"
+            return 1
+        fi
+    else
+        print_error "/usr/share/pipewire directory not found"
+        return 1
+    fi
+}
+
+# Function to copy custom pipewire configurations
+copy_custom_configs() {
+    print_status "Copying custom pipewire configurations..."
+    
+    # Get the script directory to find the configs folder
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    CONFIGS_DIR="$SCRIPT_DIR/../configs/pipewire"
+    
+    # Check if the configs directory exists
+    if [[ ! -d "$CONFIGS_DIR" ]]; then
+        print_error "Configs directory not found: $CONFIGS_DIR"
+        return 1
+    fi
+    
+    # Create ~/.config/pipewire directory if it doesn't exist
+    if [[ ! -d "$HOME/.config/pipewire" ]]; then
+        print_status "Creating ~/.config/pipewire directory..."
+        if mkdir -p "$HOME/.config/pipewire"; then
+            print_success "~/.config/pipewire directory created"
+        else
+            print_error "Failed to create ~/.config/pipewire directory"
+            return 1
+        fi
+    fi
+    
+    # Copy custom configuration files
+    print_status "Copying custom configuration files from $CONFIGS_DIR to ~/.config/pipewire..."
+    if cp -r "$CONFIGS_DIR"/* "$HOME/.config/pipewire/"; then
+        print_success "Custom pipewire configuration files copied successfully"
+    else
+        print_error "Failed to copy custom pipewire configuration files"
+        return 1
+    fi
+}
+
+# Main execution
+main() {
+    print_status "Starting pipewire session manager replacement..."
+    
+    # Manage pipewire session manager
+    manage_pipewire_session
+    
+    # Copy pipewire configuration files
+    copy_pipewire_configs
+    
+    # Copy custom pipewire configurations
+    copy_custom_configs
+    
+    print_success "Pipewire session manager replacement completed!"
+    print_warning "You may need to restart your session or reboot for changes to take effect"
+}
+
+# Run main function if script is executed directly
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi
