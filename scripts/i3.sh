@@ -24,6 +24,52 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+# Resolve target home directory (supports running via sudo)
+get_target_home() {
+    if [[ -n "$SUDO_USER" && "$SUDO_USER" != "root" ]]; then
+        eval echo ~"$SUDO_USER"
+    else
+        echo "$HOME"
+    fi
+}
+
+# Deploy i3 config to user's ~/.config/i3/config
+deploy_i3_config() {
+    print_status "Deploying i3 configuration to user's home directory..."
+
+    # Determine repository root relative to this script
+    local script_dir repo_root src_config
+    script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    repo_root="$(cd "$script_dir/.." && pwd)"
+    src_config="$repo_root/configs/desktop/i3/config"
+
+    if [[ ! -f "$src_config" ]]; then
+        print_error "Source i3 config not found at $src_config"
+        return 1
+    fi
+
+    local target_home target_dir target_config
+    target_home="$(get_target_home)"
+    target_dir="$target_home/.config/i3"
+    target_config="$target_dir/config"
+
+    mkdir -p "$target_dir" || { print_error "Failed to create $target_dir"; return 1; }
+    if cp -f "$src_config" "$target_config" >/dev/null 2>&1; then
+        :
+    else
+        print_error "Failed to copy i3 config to $target_config"
+        return 1
+    fi
+
+    # Ensure ownership matches the target user when running under sudo
+    if [[ -n "$SUDO_USER" && "$SUDO_USER" != "root" ]]; then
+        chown "$SUDO_USER":"$SUDO_USER" "$target_config" >/dev/null 2>&1 || true
+        chown -R "$SUDO_USER":"$SUDO_USER" "$target_dir" >/dev/null 2>&1 || true
+    fi
+
+    print_success "i3 configuration deployed to $target_config"
+}
+
 # Function to install packages
 install_packages() {
     print_status "Installing i3 window manager and related packages..."
@@ -64,6 +110,9 @@ main() {
         print_error "Failed to enable LightDM."
         return 1
     fi
+
+    # Deploy user i3 config
+    deploy_i3_config || return 1
     
     print_success "i3 installation completed!"
     print_warning "Reboot your system to start LightDM and log into i3."
