@@ -1,5 +1,20 @@
 #!/bin/bash
 
+# Show who is executing the script
+echo "=== Script Execution Info ==="
+echo "Effective UID: $EUID"
+echo "Real UID: $(id -u)"
+echo "Current user: $(whoami)"
+echo "Real user: $(logname 2>/dev/null || echo "unknown")"
+if [ -n "$SUDO_USER" ]; then
+    echo "Sudo user: $SUDO_USER"
+    echo "Running with sudo: YES"
+else
+    echo "Running with sudo: NO"
+fi
+echo "=============================="
+echo ""
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
