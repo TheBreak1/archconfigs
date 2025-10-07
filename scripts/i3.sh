@@ -56,16 +56,17 @@ main() {
         return 1
     fi
     
-    # Enable and start LightDM display manager
-    print_status "Enabling and starting LightDM service..."
-    if systemctl enable --now lightdm.service >/dev/null 2>&1; then
-        print_success "LightDM enabled and started successfully."
+    # Enable LightDM display manager (will start on next boot)
+    print_status "Enabling LightDM service to start on boot..."
+    if systemctl enable lightdm.service >/dev/null 2>&1; then
+        print_success "LightDM enabled to start on boot."
     else
-        print_error "Failed to enable/start LightDM."
+        print_error "Failed to enable LightDM."
         return 1
     fi
     
     print_success "i3 installation completed!"
+    print_warning "Reboot your system to start LightDM and log into i3."
 }
 
 # Run main function if script is executed directly
