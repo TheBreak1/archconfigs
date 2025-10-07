@@ -68,8 +68,8 @@ echo "Configs directory (resolved): $CONFIGS_DIR"
 
 install_desktop_components() {
     echo "Installing desktop components..."
-    # Installing base desktop as target user to avoid permission issues:
-    sudo -u "$TARGET_USER" HOME="$TARGET_HOME" pacman -S --noconfirm --needed openbox ly alacritty rofi adapta-gtk-theme noto-fonts lxappearance lxappearance-obconf nitrogen
+    # Installing base desktop (requires root):
+    pacman -S --noconfirm --needed openbox ly alacritty rofi adapta-gtk-theme noto-fonts lxappearance lxappearance-obconf nitrogen
     
     # Move config files if configs directory exists
     if [ -d "$CONFIGS_DIR" ]; then
@@ -146,8 +146,24 @@ install_desktop_components() {
 
 install_applications() {
     print_status "Installing applications..."
-    #Then installing these things as target user to avoid permission issues:
-    sudo -u "$TARGET_USER" HOME="$TARGET_HOME" pacman -S --noconfirm --needed chromium telegram-desktop discord brightnessctl mousepad nemo pavucontrol qt5ct nvidia-settings
+    #Then installing these things (requires root):
+    pacman -S --noconfirm --needed chromium telegram-desktop discord brightnessctl mousepad nemo pavucontrol qt5ct nvidia-settings
+    
+    # Fix ownership of user-specific application directories
+    print_status "Fixing ownership of application directories..."
+    if [ -d "$TARGET_HOME/.config/chromium" ]; then
+        chown -R "$TARGET_UID":"$TARGET_GID" "$TARGET_HOME/.config/chromium"
+    fi
+    if [ -d "$TARGET_HOME/.config/discord" ]; then
+        chown -R "$TARGET_UID":"$TARGET_GID" "$TARGET_HOME/.config/discord"
+    fi
+    if [ -d "$TARGET_HOME/.config/nemo" ]; then
+        chown -R "$TARGET_UID":"$TARGET_GID" "$TARGET_HOME/.config/nemo"
+    fi
+    if [ -d "$TARGET_HOME/.local/share/nemo" ]; then
+        chown -R "$TARGET_UID":"$TARGET_GID" "$TARGET_HOME/.local/share/nemo"
+    fi
+    print_success "Fixed ownership of application directories"
 
     # Ask user if they want to install AUR packages
     echo -e "${BLUE}==========================================${NC}"
@@ -172,8 +188,8 @@ install_applications() {
     fi
 }
 
-# Update package database as target user
-sudo -u "$TARGET_USER" HOME="$TARGET_HOME" pacman -Sy
+# Update package database (requires root)
+pacman -Sy
 
 install_desktop_components
 install_applications
