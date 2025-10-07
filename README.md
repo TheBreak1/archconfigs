@@ -59,10 +59,6 @@ curl -sSL https://raw.githubusercontent.com/TheBreak1/archconfigs/main/scripts/s
 
 [**ПОДПИСЫВАЕМСЯ НА ВУДЕКА, ГОВОРИМ СПАСИБО**](https://t.me/vudekosu)
 
-пару слов про гайд на текущий момент (читать с пеной изо рта)
-
-![{61566F31-3E1A-4A73-ABDE-CA31C7E5D3DC}](https://github.com/user-attachments/assets/e0d55c88-7ac1-48a1-844e-2579f28a3dc6)
-
 ## Credits
 
 [**Vudek**](https://osu.ppy.sh/users/8816345) -- Изначальный гайд
