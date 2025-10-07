@@ -83,7 +83,7 @@ sudo pacman -Syy --noconfirm || true
 
 # Install the chosen package, osu-handler, and osu-mime using paru (single attempt)
 print_status "Installing packages with paru..."
-if run_paru -S --noconfirm --needed "$package" osu-handler osu-mime; then
+if run_paru --sudoloop -S --noconfirm --needed --skipreview --pgpfetch --cleanafter --removemake "$package" osu-handler osu-mime; then
     echo ""
     print_success "Installation complete!"
     print_status "Installed packages:"
