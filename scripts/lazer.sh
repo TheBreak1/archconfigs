@@ -31,7 +31,7 @@ run_paru() {
             print_error "Running as root but SUDO_USER is not set. Cannot execute paru as root."
             exit 1
         fi
-        sudo -u "$SUDO_USER" paru "$@"
+        sudo -H -u "$SUDO_USER" --preserve-env=PATH,XDG_CACHE_HOME,XDG_CONFIG_HOME paru "$@"
     else
         paru "$@"
     fi
@@ -92,7 +92,6 @@ if run_paru -S --noconfirm --needed "$package" osu-handler osu-mime; then
     echo -e "${GREEN}-${NC} osu-mime"
 else
     echo ""
-    print_error "Installation failed. This may be a temporary network or AUR issue."
-    print_status "Tips: check internet connectivity, update ca-certificates, or try again later."
+    print_error "Installation failed. See Applist.md for manual installation."
     exit 1
 fi
