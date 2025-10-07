@@ -105,8 +105,15 @@ run_local_script_user() {
     print_status "Running $script_name as current user..."
     echo "------------------------------------------"
     
-    # Execute the script as the current user (no sudo)
-    "$script_path"
+    # Check if we're running as root and need to switch to the original user
+    if [ "$EUID" -eq 0 ] && [ -n "$SUDO_USER" ]; then
+        print_status "Switching to user: $SUDO_USER"
+        # Execute the script as the original user who ran sudo
+        sudo -u "$SUDO_USER" "$script_path"
+    else
+        # Execute the script as the current user (no sudo)
+        "$script_path"
+    fi
     
     local exit_code=$?
     echo "------------------------------------------"
