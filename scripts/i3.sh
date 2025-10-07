@@ -24,12 +24,33 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Resolve target home directory (supports running via sudo)
-get_target_home() {
+# Resolve target user (non-root) and home directory
+get_target_user() {
     if [[ -n "$SUDO_USER" && "$SUDO_USER" != "root" ]]; then
-        eval echo ~"$SUDO_USER"
+        echo "$SUDO_USER"
+        return
+    fi
+    if [[ -n "$SUDO_UID" ]]; then
+        id -nu "$SUDO_UID" 2>/dev/null && return
+    fi
+    # Fallback: try logname when running as root without sudo
+    local ln
+    if ln="$(logname 2>/dev/null)" && [[ -n "$ln" && "$ln" != "root" ]]; then
+        echo "$ln"
+        return
+    fi
+    # Last resort: current user
+    echo "${USER:-root}"
+}
+
+get_target_home() {
+    local tgt_user home_dir
+    tgt_user="$(get_target_user)"
+    home_dir="$(getent passwd "$tgt_user" 2>/dev/null | cut -d: -f6)"
+    if [[ -n "$home_dir" ]]; then
+        echo "$home_dir"
     else
-        echo "$HOME"
+        eval echo ~"$tgt_user"
     fi
 }
 
@@ -55,7 +76,8 @@ deploy_i3_config() {
         return 1
     fi
 
-    local target_home target_dir target_config
+    local target_home target_dir target_config target_user
+    target_user="$(get_target_user)"
     target_home="$(get_target_home)"
     target_dir="$target_home/.config/i3"
     target_config="$target_dir/config"
@@ -68,10 +90,10 @@ deploy_i3_config() {
         return 1
     fi
 
-    # Ensure ownership matches the target user when running under sudo
-    if [[ -n "$SUDO_USER" && "$SUDO_USER" != "root" ]]; then
-        chown "$SUDO_USER":"$SUDO_USER" "$target_config" >/dev/null 2>&1 || true
-        chown -R "$SUDO_USER":"$SUDO_USER" "$target_dir" >/dev/null 2>&1 || true
+    # Ensure ownership matches the target user (when not root)
+    if [[ -n "$target_user" && "$target_user" != "root" ]]; then
+        chown "$target_user":"$target_user" "$target_config" >/dev/null 2>&1 || true
+        chown -R "$target_user":"$target_user" "$target_dir" >/dev/null 2>&1 || true
     fi
 
     print_success "i3 configuration deployed to $target_config"
