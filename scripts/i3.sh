@@ -77,16 +77,14 @@ install_packages() {
     # Package list
     packages=("dmenu" "i3-wm" "i3blocks" "i3lock" "i3status" "lightdm" "lightdm-gtk-greeter" "xss-lock" "xterm" "kitty" "nemo" "flameshot" "chromium")
     
-    # Install packages
-    for package in "${packages[@]}"; do
-        print_status "Installing $package..."
-        if pacman -S --noconfirm "$package" >/dev/null 2>&1; then
-            print_success "$package installed successfully"
-        else
-            print_error "Failed to install $package"
-            return 1
-        fi
-    done
+    # Install all packages in a single command
+    print_status "Installing packages: ${packages[*]}"
+    if pacman -S --noconfirm "${packages[@]}" >/dev/null 2>&1; then
+        print_success "All packages installed successfully"
+    else
+        print_error "Failed to install packages"
+        return 1
+    fi
     
     print_success "All i3 packages installed successfully!"
 }
