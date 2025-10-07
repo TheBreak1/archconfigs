@@ -22,11 +22,11 @@
   
   - [Настройка OpenTabletDriver](guides/OTD.md)
   
-  - [Конфиг Wooting клавиатур](guides/Wooting.md)
+  - [Конфиг Wooting клавиатур (сделано скриптом)](guides/Wooting.md)
 
-  - [Открытие разделов Linux на Windows и наоборот](FS.md)
+  - [Открытие разделов Linux на Windows и наоборот](guides/FS.md)
   
-  - [Создание ссылок на старые установки osu!](Links.md)
+  - [Создание ссылок на старые установки osu!](guides/Links.md)
  
   - Debloat xd
  
@@ -47,7 +47,6 @@ curl -sSL https://raw.githubusercontent.com/TheBreak1/archconfigs/main/scripts/s
 Сначала качается стартовый скрипт, который выгружает репозиторий, ставит самую базу для работы в терминале и запускает `menu.sh`, через который уже на выбор стартует всё остальное.
 
 ## ТУДУ
-- [ ] Отсортировать пакеты по приоритетам (первый, второй, AUR)
 - [ ] скрипт для OTD приколов или, если проще, замена файлов
 - [ ] скрипт(готовые файлы?) для osu-wine чтоб ничего, по возможности, не писать
 - [X] Файлик для настройки вутинга
@@ -57,15 +56,6 @@ curl -sSL https://raw.githubusercontent.com/TheBreak1/archconfigs/main/scripts/s
 - [ ] микрогайд по монтированию диска с кругами и ссылкам
 - [ ] микрогайд по деблоту и так почти чистой установки
 
-ЧТО ВПРИНЦИПЕ ДОЛЖНО ДЕЛАТЬСЯ (судя по [гайду](https://telegra.ph/osu-low-latency-guide-02-03))
-
-0. вообще в приоритете я бы поставил paru и остальные проги
-1.  конфиги и бинды для i3+rofi, в моём случае Openbox+rofi и GTK3 тема
-2.  настройка wine, загрузка стэйбла, скрипт запуска и .desktop файл
-3.  опа, кастомный wine
-4.  настройка аудио сервера (всё в ~/.config, W)
-5.  загрузка/установка OTD
-6.  настройки под Wooting 60HE, оно летит в /etc
 
 [**ПОДПИСЫВАЕМСЯ НА ВУДЕКА, ГОВОРИМ СПАСИБО**](https://t.me/vudekosu)
 
@@ -75,7 +65,7 @@ curl -sSL https://raw.githubusercontent.com/TheBreak1/archconfigs/main/scripts/s
 
 ## Credits
 
-[**Vudek**](https://osu.ppy.sh/users/8816345) -- Изначальный гайд, Конфиги на вутинг и Pipewire.
+[**Vudek**](https://osu.ppy.sh/users/8816345) -- Изначальный гайд
 
 [**The_Break**](https://osu.ppy.sh/users/8610746) -- Обновление гайда, конфиги Openbox
 
