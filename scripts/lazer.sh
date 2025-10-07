@@ -24,20 +24,7 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Ensure paru runs as the invoking non-root user if this script is executed with sudo
-run_paru() {
-    if [ "$EUID" -eq 0 ]; then
-        if [ -z "$SUDO_USER" ]; then
-            print_error "Running as root but SUDO_USER is not set. Cannot execute paru as root."
-            exit 1
-        fi
-        sudo -H -u "$SUDO_USER" --preserve-env=PATH,XDG_CACHE_HOME,XDG_CONFIG_HOME paru "$@"
-    else
-        paru "$@"
-    fi
-}
-
-# (no retry logic needed)
+# (no sudo or retry logic needed)
 
 # Check if paru is installed
 if ! command -v paru &> /dev/null; then
@@ -77,34 +64,20 @@ case $choice in
         ;;
 esac
 
-# Refresh package databases (helps with mirror issues)
+# Refresh package databases (user-level; paru will handle sudo when needed)
 print_status "Refreshing package databases..."
-sudo pacman -Syy --noconfirm || true
+paru -Sy --noconfirm || true
 
 # Install the chosen package and osu-mime using paru (single attempt)
 print_status "Installing packages with paru..."
-if [ "$EUID" -eq 0 ]; then
-    if sudo -H -u "$SUDO_USER" --preserve-env=PATH,XDG_CACHE_HOME,XDG_CONFIG_HOME paru -S --noconfirm --needed "$package" osu-mime; then
-        echo ""
-        print_success "Installation complete!"
-        print_status "Installed packages:"
-        echo -e "${GREEN}-${NC} $package"
-        echo -e "${GREEN}-${NC} osu-mime"
-    else
-        echo ""
-        print_error "Installation failed. See Applist.md for manual installation."
-        exit 1
-    fi
+if paru -S --noconfirm --needed "$package" osu-mime; then
+    echo ""
+    print_success "Installation complete!"
+    print_status "Installed packages:"
+    echo -e "${GREEN}-${NC} $package"
+    echo -e "${GREEN}-${NC} osu-mime"
 else
-    if paru -S --noconfirm --needed "$package" osu-mime; then
-        echo ""
-        print_success "Installation complete!"
-        print_status "Installed packages:"
-        echo -e "${GREEN}-${NC} $package"
-        echo -e "${GREEN}-${NC} osu-mime"
-    else
-        echo ""
-        print_error "Installation failed. See Applist.md for manual installation."
-        exit 1
-    fi
+    echo ""
+    print_error "Installation failed. See Applist.md for manual installation."
+    exit 1
 fi

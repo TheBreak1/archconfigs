@@ -79,6 +79,47 @@ run_local_script() {
     return $exit_code
 }
 
+# Function to run a local script as the current user (no sudo)
+run_local_script_user() {
+    local script_name="$1"
+    # Get the directory where this menu.sh script is located
+    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    local script_path="$script_dir/$script_name"
+    
+    if [ ! -f "$script_path" ]; then
+        print_error "Script '$script_name' not found in script directory!"
+        print_warning "Please make sure the script exists in the same folder as this menu."
+        print_status "Script directory: $script_dir"
+        print_status "Current directory: $(pwd)"
+        print_status "Looking for: $script_path"
+        print_status "Contents of current directory:"
+        ls -la
+        return 1
+    fi
+    
+    if [ ! -x "$script_path" ]; then
+        print_status "Making script executable..."
+        chmod +x "$script_path"
+    fi
+    
+    print_status "Running $script_name as current user..."
+    echo "------------------------------------------"
+    
+    # Execute the script as the current user (no sudo)
+    "$script_path"
+    
+    local exit_code=$?
+    echo "------------------------------------------"
+    
+    if [ $exit_code -eq 0 ]; then
+        print_success "Script executed successfully!"
+    else
+        print_error "Script exited with error code: $exit_code"
+    fi
+    
+    return $exit_code
+}
+
 # Function to show main menu. ADD NEW SCRIPTS HERE.
 show_menu() {
     echo -e "${BLUE}Available Scripts:${NC}"
@@ -101,6 +142,7 @@ while true; do
     read -p "Choose an option [1-8]: " choice
     echo
     
+    #Add _user to run_local_script if sudo is unnecessary
     case $choice in
         1)
             run_local_script "i3.sh"
@@ -112,7 +154,7 @@ while true; do
             run_local_script "stable.sh"
             ;;
         4)
-            run_local_script "lazer.sh"
+            run_local_script_user "lazer.sh"
             ;;
         5)
             run_local_script "pipewire.sh"
