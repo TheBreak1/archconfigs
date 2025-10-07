@@ -51,6 +51,19 @@ main() {
     
     # Install packages
     install_packages
+    if [[ $? -ne 0 ]]; then
+        print_error "Package installation failed, aborting LightDM enable step."
+        return 1
+    fi
+    
+    # Enable and start LightDM display manager
+    print_status "Enabling and starting LightDM service..."
+    if systemctl enable --now lightdm.service >/dev/null 2>&1; then
+        print_success "LightDM enabled and started successfully."
+    else
+        print_error "Failed to enable/start LightDM."
+        return 1
+    fi
     
     print_success "i3 installation completed!"
 }
