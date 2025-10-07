@@ -24,79 +24,65 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Resolve target user (non-root) and home directory
-get_target_user() {
-    if [[ -n "$SUDO_USER" && "$SUDO_USER" != "root" ]]; then
-        echo "$SUDO_USER"
-        return
-    fi
-    if [[ -n "$SUDO_UID" ]]; then
-        id -nu "$SUDO_UID" 2>/dev/null && return
-    fi
-    # Fallback: try logname when running as root without sudo
-    local ln
-    if ln="$(logname 2>/dev/null)" && [[ -n "$ln" && "$ln" != "root" ]]; then
-        echo "$ln"
-        return
-    fi
-    # Last resort: current user
-    echo "${USER:-root}"
-}
+# Require root and resolve target user info similar to openbox.sh
+if [[ $EUID -ne 0 ]]; then
+    echo "Error: This script must be run as root (use sudo)." >&2
+    exit 1
+fi
 
-get_target_home() {
-    local tgt_user home_dir
-    tgt_user="$(get_target_user)"
-    home_dir="$(getent passwd "$tgt_user" 2>/dev/null | cut -d: -f6)"
-    if [[ -n "$home_dir" ]]; then
-        echo "$home_dir"
-    else
-        eval echo ~"$tgt_user"
-    fi
-}
+# Determine the real target (non-root) user
+TARGET_USER="${SUDO_USER:-}"
+if [[ -z "${TARGET_USER}" || "${TARGET_USER}" == "root" ]]; then
+    TARGET_USER=$(logname 2>/dev/null || true)
+fi
 
-# Deploy i3 config to user's ~/.config/i3/config
+if [[ -z "${TARGET_USER}" || "${TARGET_USER}" == "root" ]]; then
+    echo "Error: Could not determine the non-root target user. Make sure to run with sudo from a normal user session." >&2
+    exit 1
+fi
+
+# Resolve target user's home from system database
+TARGET_HOME=$(getent passwd "$TARGET_USER" | cut -d: -f6)
+if [[ -z "${TARGET_HOME}" || ! -d "${TARGET_HOME}" ]]; then
+    echo "Error: Could not resolve home directory for user '$TARGET_USER'." >&2
+    exit 1
+fi
+
+TARGET_UID=$(id -u "$TARGET_USER")
+TARGET_GID=$(id -g "$TARGET_USER")
+
+# Resolve script and configs directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIGS_DIR="$(realpath "$SCRIPT_DIR/../configs/desktop/i3")"
+
+# Deploy i3 config to user's ~/.config/i3/config (mirroring openbox.sh approach)
 deploy_i3_config() {
     print_status "Deploying i3 configuration to user's home directory..."
 
-    # Determine repository root robustly
-    local script_dir repo_root src_config
-    script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    if command -v git >/dev/null 2>&1; then
-        repo_root="$(git -C "$script_dir" rev-parse --show-toplevel 2>/dev/null)"
-    fi
-    if [[ -z "$repo_root" ]]; then
-        repo_root="$(cd "$script_dir/.." && pwd)"
-    fi
-
-    src_config="$repo_root/configs/desktop/i3/config"
-    print_status "Using source i3 config at: $src_config"
-
-    if [[ ! -f "$src_config" ]]; then
-        print_error "Source i3 config not found at $src_config"
+    if [[ ! -d "$CONFIGS_DIR" ]]; then
+        print_error "Configs directory not found at: $CONFIGS_DIR"
         return 1
     fi
 
-    local target_home target_dir target_config target_user
-    target_user="$(get_target_user)"
-    target_home="$(get_target_home)"
-    target_dir="$target_home/.config/i3"
-    target_config="$target_dir/config"
+    local src_file dst_dir dst_config
+    src_file="$CONFIGS_DIR/config"
+    dst_dir="$TARGET_HOME/.config/i3"
+    dst_config="$dst_dir/config"
 
-    mkdir -p "$target_dir" || { print_error "Failed to create $target_dir"; return 1; }
-    if cp -f "$src_config" "$target_config"; then
-        :
+    if [[ ! -f "$src_file" ]]; then
+        print_error "Source i3 config not found at $src_file"
+        return 1
+    fi
+
+    install -d -m 0755 -o "$TARGET_UID" -g "$TARGET_GID" "$dst_dir" || {
+        print_error "Failed to create $dst_dir"; return 1; }
+    if cp -av "$src_file" "$dst_config"; then
+        chown -R "$TARGET_UID":"$TARGET_GID" "$dst_dir"
+        print_success "i3 config copied to $dst_config"
     else
-        print_error "Failed to copy i3 config to $target_config"
+        print_error "Failed to copy i3 config to $dst_config"
         return 1
     fi
-
-    # Ensure ownership matches the target user (when not root)
-    if [[ -n "$target_user" && "$target_user" != "root" ]]; then
-        chown "$target_user":"$target_user" "$target_config" >/dev/null 2>&1 || true
-        chown -R "$target_user":"$target_user" "$target_dir" >/dev/null 2>&1 || true
-    fi
-
-    print_success "i3 configuration deployed to $target_config"
 }
 
 # Function to install packages
