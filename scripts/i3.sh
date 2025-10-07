@@ -37,11 +37,18 @@ get_target_home() {
 deploy_i3_config() {
     print_status "Deploying i3 configuration to user's home directory..."
 
-    # Determine repository root relative to this script
+    # Determine repository root robustly
     local script_dir repo_root src_config
     script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    repo_root="$(cd "$script_dir/.." && pwd)"
+    if command -v git >/dev/null 2>&1; then
+        repo_root="$(git -C "$script_dir" rev-parse --show-toplevel 2>/dev/null)"
+    fi
+    if [[ -z "$repo_root" ]]; then
+        repo_root="$(cd "$script_dir/.." && pwd)"
+    fi
+
     src_config="$repo_root/configs/desktop/i3/config"
+    print_status "Using source i3 config at: $src_config"
 
     if [[ ! -f "$src_config" ]]; then
         print_error "Source i3 config not found at $src_config"
@@ -54,7 +61,7 @@ deploy_i3_config() {
     target_config="$target_dir/config"
 
     mkdir -p "$target_dir" || { print_error "Failed to create $target_dir"; return 1; }
-    if cp -f "$src_config" "$target_config" >/dev/null 2>&1; then
+    if cp -f "$src_config" "$target_config"; then
         :
     else
         print_error "Failed to copy i3 config to $target_config"
