@@ -128,15 +128,16 @@ reload_systemd_daemon() {
     
     # Get the original user who invoked sudo
     if [[ -n "$SUDO_USER" ]]; then
-        if sudo -u "$SUDO_USER" systemctl --user daemon-reload; then
+        # Set up proper environment for systemd user operations
+        if sudo -u "$SUDO_USER" -E systemctl --user daemon-reload; then
             print_success "Systemd user daemon reloaded successfully"
         else
-            print_error "Failed to reload systemd user daemon"
-            exit 1
+            print_warning "Failed to reload systemd user daemon (this is often not critical)"
+            print_status "The service will still be enabled and will work on next login"
         fi
     else
-        print_error "Cannot determine original user for systemd user operations"
-        exit 1
+        print_warning "Cannot determine original user for systemd user operations"
+        print_status "Skipping daemon reload - service will still be enabled"
     fi
 }
 
