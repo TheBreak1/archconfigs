@@ -86,7 +86,6 @@ install_dependencies() {
             print_error "Failed to install lib32-nvidia-utils."
             return 1
         fi
-        fi
     else
         print_warning "No NVIDIA GPU detected. Skipping lib32-nvidia-utils installation."
     fi
