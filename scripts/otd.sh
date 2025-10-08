@@ -128,32 +128,29 @@ reload_systemd_daemon() {
     
     # Get the original user who invoked sudo
     if [[ -n "$SUDO_USER" ]]; then
-        # Set up proper environment for systemd user operations
-        if sudo -u "$SUDO_USER" -E systemctl --user daemon-reload; then
+        if sudo -u "$SUDO_USER" systemctl --user daemon-reload; then
             print_success "Systemd user daemon reloaded successfully"
         else
-            print_warning "Failed to reload systemd user daemon (this is often not critical)"
-            print_status "The service will still be enabled and will work on next login"
+            print_error "Failed to reload systemd user daemon"
+            exit 1
         fi
     else
-        print_warning "Cannot determine original user for systemd user operations"
-        print_status "Skipping daemon reload - service will still be enabled"
+        print_error "Cannot determine original user for systemd user operations"
+        exit 1
     fi
 }
 
-# Function to enable opentabletdriver service
+# Function to enable and start opentabletdriver service
+# !!!!! MAY BE BORKED !!!!!
 enable_opentabletdriver() {
-    print_status "Enabling OpenTabletDriver service..."
+    print_status "Enabling and starting OpenTabletDriver service..."
     
     # Get the original user who invoked sudo
     if [[ -n "$SUDO_USER" ]]; then
-        # Only enable the service, don't start it immediately
-        if sudo -u "$SUDO_USER" systemctl --user enable opentabletdriver; then
-            print_success "OpenTabletDriver service enabled successfully"
-            print_status "The service will start automatically on next login or reboot"
-            print_status "You can manually start it now with: systemctl --user start opentabletdriver"
+        if sudo -u "$SUDO_USER" systemctl --user enable opentabletdriver --now; then
+            print_success "OpenTabletDriver service enabled and started successfully"
         else
-            print_error "Failed to enable OpenTabletDriver service"
+            print_error "Failed to enable/start OpenTabletDriver service"
             exit 1
         fi
     else
