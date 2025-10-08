@@ -72,6 +72,12 @@ install_desktop_components() {
     # Installing base desktop (requires root):
     pacman -S --noconfirm --needed openbox ly alacritty rofi adapta-gtk-theme noto-fonts lxappearance lxappearance-obconf nitrogen
     
+    # Ensure ~/.config directory exists with proper permissions
+    print_status "Ensuring ~/.config directory exists with proper permissions"
+    install -d -m 0755 -o "$TARGET_UID" -g "$TARGET_GID" "$TARGET_HOME/.config"
+    chown "$TARGET_UID":"$TARGET_GID" "$TARGET_HOME/.config"
+    print_success "~/.config directory permissions set correctly"
+
     # Move config files if configs directory exists
     if [ -d "$CONFIGS_DIR" ]; then
         print_status "Moving configuration files to $TARGET_HOME/.config/"
