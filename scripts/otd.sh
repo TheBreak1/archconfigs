@@ -140,17 +140,19 @@ reload_systemd_daemon() {
     fi
 }
 
-# Function to enable and start opentabletdriver service
-# !!!!! MAY BE BORKED !!!!!
+# Function to enable opentabletdriver service
 enable_opentabletdriver() {
-    print_status "Enabling and starting OpenTabletDriver service..."
+    print_status "Enabling OpenTabletDriver service..."
     
     # Get the original user who invoked sudo
     if [[ -n "$SUDO_USER" ]]; then
-        if sudo -u "$SUDO_USER" systemctl --user enable opentabletdriver --now; then
-            print_success "OpenTabletDriver service enabled and started successfully"
+        # Only enable the service, don't start it immediately
+        if sudo -u "$SUDO_USER" systemctl --user enable opentabletdriver; then
+            print_success "OpenTabletDriver service enabled successfully"
+            print_status "The service will start automatically on next login or reboot"
+            print_status "You can manually start it now with: systemctl --user start opentabletdriver"
         else
-            print_error "Failed to enable/start OpenTabletDriver service"
+            print_error "Failed to enable OpenTabletDriver service"
             exit 1
         fi
     else
