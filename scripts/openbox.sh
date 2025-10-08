@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#LOTS of chown's here, this is better running as user, everything is but i've spent too much time
 set -euo pipefail
 shopt -s dotglob nullglob
 
@@ -149,21 +150,6 @@ install_applications() {
     #Then installing these things (requires root):
     pacman -S --noconfirm --needed chromium telegram-desktop discord brightnessctl mousepad nemo pavucontrol qt5ct nvidia-settings
     
-    # Fix ownership of user-specific application directories
-    print_status "Fixing ownership of application directories..."
-    if [ -d "$TARGET_HOME/.config/chromium" ]; then
-        chown -R "$TARGET_UID":"$TARGET_GID" "$TARGET_HOME/.config/chromium"
-    fi
-    if [ -d "$TARGET_HOME/.config/discord" ]; then
-        chown -R "$TARGET_UID":"$TARGET_GID" "$TARGET_HOME/.config/discord"
-    fi
-    if [ -d "$TARGET_HOME/.config/nemo" ]; then
-        chown -R "$TARGET_UID":"$TARGET_GID" "$TARGET_HOME/.config/nemo"
-    fi
-    if [ -d "$TARGET_HOME/.local/share/nemo" ]; then
-        chown -R "$TARGET_UID":"$TARGET_GID" "$TARGET_HOME/.local/share/nemo"
-    fi
-    print_success "Fixed ownership of application directories"
 
     # Ask user if they want to install AUR packages
     echo -e "${BLUE}==========================================${NC}"

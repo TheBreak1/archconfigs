@@ -28,14 +28,42 @@ print_error() {
 manage_pipewire_session() {
     print_status "Managing pipewire session manager..."
     
-    # Remove wireplumber if installed
+    # Check if wireplumber is currently installed
     if pacman -Q wireplumber >/dev/null 2>&1; then
-        print_status "Removing wireplumber..."
+        print_status "wireplumber is currently installed, preparing for replacement..."
+        
+        # Stop and disable wireplumber service first
+        if systemctl --user is-active wireplumber.service >/dev/null 2>&1; then
+            print_status "Stopping wireplumber service..."
+            if sudo -u "$SUDO_USER" systemctl --user stop wireplumber.service; then
+                print_success "wireplumber service stopped"
+            else
+                print_warning "Failed to stop wireplumber service"
+            fi
+        fi
+        
+        if systemctl --user is-enabled wireplumber.service >/dev/null 2>&1; then
+            print_status "Disabling wireplumber service..."
+            if sudo -u "$SUDO_USER" systemctl --user disable wireplumber.service; then
+                print_success "wireplumber service disabled"
+            else
+                print_warning "Failed to disable wireplumber service"
+            fi
+        fi
+        
+        # Remove wireplumber first to avoid conflicts
+        print_status "Removing wireplumber to avoid conflicts..."
         if pacman -R --noconfirm wireplumber; then
             print_success "wireplumber removed successfully"
         else
             print_error "Failed to remove wireplumber"
-            return 1
+            print_status "Trying to force removal with --nodeps..."
+            if pacman -R --nodeps --noconfirm wireplumber; then
+                print_success "wireplumber force-removed successfully"
+            else
+                print_error "Failed to remove wireplumber even with --nodeps"
+                return 1
+            fi
         fi
     else
         print_warning "wireplumber is not installed"
@@ -50,13 +78,20 @@ manage_pipewire_session() {
         return 1
     fi
     
-    # Enable the service (run as the actual user, not root)
+    # Enable and start pipewire-media-session service
     print_status "Enabling pipewire-media-session service..."
     if sudo -u "$SUDO_USER" systemctl --user enable pipewire-media-session.service; then
         print_success "pipewire-media-session service enabled"
     else
         print_error "Failed to enable pipewire-media-session service"
         return 1
+    fi
+    
+    print_status "Starting pipewire-media-session service..."
+    if sudo -u "$SUDO_USER" systemctl --user start pipewire-media-session.service; then
+        print_success "pipewire-media-session service started"
+    else
+        print_warning "Failed to start pipewire-media-session service (may need to restart session)"
     fi
 }
 
