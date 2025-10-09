@@ -64,18 +64,18 @@ install_opentabletdriver() {
 check_module_blacklist() {
     print_status "Checking if kernel modules need to be blacklisted..."
     
-    # Check if wacom module is loaded
-    if lsmod | grep -q wacom; then
+    # Check if wacom module is loaded using sudo
+    if sudo lsmod | grep -q wacom; then
         print_warning "wacom module is currently loaded. You may need to blacklist it."
-        print_status "To blacklist wacom, run as root:"
+        print_status "To blacklist wacom, run:"
         echo "  echo 'blacklist wacom' | sudo tee -a /etc/modprobe.d/blacklist.conf"
         echo "  sudo rmmod wacom"
     fi
     
-    # Check if hid_uclogic module is loaded
-    if lsmod | grep -q hid_uclogic; then
+    # Check if hid_uclogic module is loaded using sudo
+    if sudo lsmod | grep -q hid_uclogic; then
         print_warning "hid_uclogic module is currently loaded. You may need to blacklist it."
-        print_status "To blacklist hid_uclogic, run as root:"
+        print_status "To blacklist hid_uclogic, run:"
         echo "  echo 'blacklist hid_uclogic' | sudo tee -a /etc/modprobe.d/blacklist.conf"
         echo "  sudo rmmod hid_uclogic"
     fi
