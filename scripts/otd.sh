@@ -60,18 +60,24 @@ install_opentabletdriver() {
     fi
 }
 
-# Function to check if modules need to be blacklisted
-check_module_blacklist() {
+# Function to handle conflicting kernel modules
+handle_module_blacklist() {
     print_status "Checking for conflicting kernel modules..."
     
-    # Check if wacom module is loaded using sudo
+    # Check if wacom module is loaded and blacklist it
     if sudo lsmod | grep -q wacom; then
-        print_warning "wacom module detected - may conflict with OpenTabletDriver"
+        print_warning "wacom module detected - blacklisting and removing..."
+        echo "blacklist wacom" | sudo tee -a /etc/modprobe.d/blacklist.conf
+        sudo rmmod wacom
+        print_success "wacom module blacklisted and removed"
     fi
     
-    # Check if hid_uclogic module is loaded using sudo
+    # Check if hid_uclogic module is loaded and blacklist it
     if sudo lsmod | grep -q hid_uclogic; then
-        print_warning "hid_uclogic module detected - may conflict with OpenTabletDriver"
+        print_warning "hid_uclogic module detected - blacklisting and removing..."
+        echo "blacklist hid_uclogic" | sudo tee -a /etc/modprobe.d/blacklist.conf
+        sudo rmmod hid_uclogic
+        print_success "hid_uclogic module blacklisted and removed"
     fi
 }
 
@@ -118,13 +124,12 @@ main() {
     
     check_user
     install_opentabletdriver
-    check_module_blacklist
+    handle_module_blacklist
     enable_opentabletdriver
     
     echo "=========================================="
     print_success "OpenTabletDriver installation and configuration completed successfully!"
-    print_warning "If you have wacom or hid_uclogic modules loaded, you may need to blacklist them manually."
-    print_status "Check the output above for specific commands to run with sudo."
+    print_status "All conflicting modules have been automatically handled."
 }
 
 # Run main function
