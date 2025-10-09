@@ -4,8 +4,6 @@
 
 Так же здесь лежат уже готовые конфиги для приложений, они ставятся по гайду во время установки, но на всякий расписано, как это сделать самому. Ведутся работы по автоматизации - лмк @t_brk1
 
-0168:err:mmdevapi:init_driver No driver from L"pulse,alsa,oss,coreaudio" could be initialized. Maybe check dependencies with WINEDEBUG=warn+module.
-
 ## Список гайдов
   
   - [Установка Arch Linux](guides/Install.md)
