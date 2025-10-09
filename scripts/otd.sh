@@ -122,32 +122,15 @@ remove_hid_uclogic_module() {
     fi
 }
 
-# Function to reload systemd user daemon
-reload_systemd_daemon() {
-    print_status "Reloading systemd user daemon..."
-    
-    # Get the original user who invoked sudo
-    if [[ -n "$SUDO_USER" ]]; then
-        if sudo -u "$SUDO_USER" systemctl --user daemon-reload; then
-            print_success "Systemd user daemon reloaded successfully"
-        else
-            print_error "Failed to reload systemd user daemon"
-            exit 1
-        fi
-    else
-        print_error "Cannot determine original user for systemd user operations"
-        exit 1
-    fi
-}
 
 # Function to enable and start opentabletdriver service
-# !!!!! MAY BE BORKED !!!!!
 enable_opentabletdriver() {
     print_status "Enabling and starting OpenTabletDriver service..."
     
     # Get the original user who invoked sudo
     if [[ -n "$SUDO_USER" ]]; then
-        if sudo -u "$SUDO_USER" systemctl --user enable opentabletdriver --now; then
+        # Preserve environment variables for systemd user operations
+        if sudo -u "$SUDO_USER" env XDG_RUNTIME_DIR="/run/user/$(id -u "$SUDO_USER")" DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u "$SUDO_USER")/bus" systemctl --user enable opentabletdriver --now; then
             print_success "OpenTabletDriver service enabled and started successfully"
         else
             print_error "Failed to enable/start OpenTabletDriver service"
@@ -170,7 +153,6 @@ main() {
     remove_wacom_module
     blacklist_hid_uclogic
     remove_hid_uclogic_module
-    reload_systemd_daemon
     enable_opentabletdriver
     
     echo "=========================================="
