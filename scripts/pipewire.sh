@@ -114,9 +114,18 @@ download_pipewire() {
         print_success "pipewire-media-session service enabled"
     else
         print_warning "Failed to enable pipewire-media-session service"
+        print_status "Trying to enable service as user..."
+        if sudo -u "$SUDO_USER" bash -c "systemctl --user enable pipewire-media-session.service"; then
+            print_success "pipewire-media-session service enabled as user"
+        else
+            print_warning "Failed to enable pipewire-media-session service even as user"
+        fi
     fi
     
     print_success "pipewire-media-session installation completed!"
+    print_warning "If the service wasn't enabled automatically, please run manually:"
+    print_status "systemctl --user enable pipewire-media-session.service"
+    print_status "systemctl --user start pipewire-media-session.service"
 }
 
 # Function to copy pipewire configuration files
