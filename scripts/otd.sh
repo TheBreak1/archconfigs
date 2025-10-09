@@ -29,14 +29,14 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Function to check if running as root
-check_root() {
-    if [[ $EUID -ne 0 ]]; then
-        print_error "This script must be run as root or with sudo"
-        echo "Usage: sudo $0"
+# Function to check if running as user (not root)
+check_user() {
+    if [[ $EUID -eq 0 ]]; then
+        print_error "This script should be run as a regular user, not as root"
+        echo "Usage: $0"
         exit 1
     fi
-    print_success "Running with root privileges"
+    print_success "Running as user: $(whoami)"
 }
 
 # Function to install opentabletdriver using paru
@@ -60,66 +60,28 @@ install_opentabletdriver() {
     fi
 }
 
-# Function to blacklist wacom module
-blacklist_wacom() {
-    print_status "Blacklisting wacom module..."
+# Function to check if modules need to be blacklisted
+check_module_blacklist() {
+    print_status "Checking if kernel modules need to be blacklisted..."
     
-    # Check if blacklist.conf exists, create if it doesn't
-    if [[ ! -f /etc/modprobe.d/blacklist.conf ]]; then
-        print_status "Creating /etc/modprobe.d/blacklist.conf"
-        touch /etc/modprobe.d/blacklist.conf
-    fi
-    
-    # Check if wacom is already blacklisted
-    if grep -q "blacklist wacom" /etc/modprobe.d/blacklist.conf; then
-        print_warning "wacom is already blacklisted"
-    else
-        echo "blacklist wacom" >> /etc/modprobe.d/blacklist.conf
-        print_success "wacom module blacklisted"
-    fi
-}
-
-# Function to remove wacom module
-remove_wacom_module() {
-    print_status "Removing wacom module..."
-    
+    # Check if wacom module is loaded
     if lsmod | grep -q wacom; then
-        if rmmod wacom; then
-            print_success "wacom module removed successfully"
-        else
-            print_warning "Failed to remove wacom module (may not be loaded)"
-        fi
-    else
-        print_warning "wacom module is not currently loaded"
+        print_warning "wacom module is currently loaded. You may need to blacklist it."
+        print_status "To blacklist wacom, run as root:"
+        echo "  echo 'blacklist wacom' | sudo tee -a /etc/modprobe.d/blacklist.conf"
+        echo "  sudo rmmod wacom"
     fi
-}
-
-# Function to blacklist hid_uclogic module
-blacklist_hid_uclogic() {
-    print_status "Blacklisting hid_uclogic module..."
     
-    # Check if hid_uclogic is already blacklisted
-    if grep -q "blacklist hid_uclogic" /etc/modprobe.d/blacklist.conf; then
-        print_warning "hid_uclogic is already blacklisted"
-    else
-        echo "blacklist hid_uclogic" >> /etc/modprobe.d/blacklist.conf
-        print_success "hid_uclogic module blacklisted"
-    fi
-}
-
-# Function to remove hid_uclogic module
-remove_hid_uclogic_module() {
-    print_status "Removing hid_uclogic module..."
-    
+    # Check if hid_uclogic module is loaded
     if lsmod | grep -q hid_uclogic; then
-        if rmmod hid_uclogic; then
-            print_success "hid_uclogic module removed successfully"
-        else
-            print_warning "Failed to remove hid_uclogic module (may not be loaded)"
-        fi
-    else
-        print_warning "hid_uclogic module is not currently loaded"
+        print_warning "hid_uclogic module is currently loaded. You may need to blacklist it."
+        print_status "To blacklist hid_uclogic, run as root:"
+        echo "  echo 'blacklist hid_uclogic' | sudo tee -a /etc/modprobe.d/blacklist.conf"
+        echo "  sudo rmmod hid_uclogic"
     fi
+    
+    print_status "Note: Module blacklisting requires root privileges."
+    print_status "You can run these commands manually or use a separate script with sudo."
 }
 
 
@@ -127,25 +89,13 @@ remove_hid_uclogic_module() {
 enable_opentabletdriver() {
     print_status "Enabling and starting OpenTabletDriver service..."
     
-    # Get the original user who invoked sudo
-    if [[ -n "$SUDO_USER" ]]; then
-        # Enable linger for the user to allow persistent user sessions
-        print_status "Enabling linger for user $SUDO_USER..."
-        if loginctl enable-linger "$SUDO_USER"; then
-            print_success "Linger enabled for user $SUDO_USER"
-        else
-            print_warning "Failed to enable linger for user $SUDO_USER (may already be enabled)"
-        fi
-        
-        # Preserve environment variables for systemd user operations
-        if sudo -u "$SUDO_USER" env XDG_RUNTIME_DIR="/run/user/$(id -u "$SUDO_USER")" DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u "$SUDO_USER")/bus" systemctl --user enable opentabletdriver --now; then
-            print_success "OpenTabletDriver service enabled and started successfully"
-        else
-            print_error "Failed to enable/start OpenTabletDriver service"
-            exit 1
-        fi
+    # Enable and start the service as the current user
+    if systemctl --user enable opentabletdriver --now; then
+        print_success "OpenTabletDriver service enabled and started successfully"
     else
-        print_error "Cannot determine original user for systemd user operations"
+        print_error "Failed to enable/start OpenTabletDriver service"
+        print_status "Make sure you have a systemd user session running"
+        print_status "You may need to log out and log back in, or run: systemctl --user daemon-reload"
         exit 1
     fi
 }
@@ -155,17 +105,15 @@ main() {
     print_status "Starting OpenTabletDriver installation and configuration..."
     echo "=========================================="
     
-    check_root
+    check_user
     install_opentabletdriver
-    blacklist_wacom
-    remove_wacom_module
-    blacklist_hid_uclogic
-    remove_hid_uclogic_module
+    check_module_blacklist
     enable_opentabletdriver
     
     echo "=========================================="
     print_success "OpenTabletDriver installation and configuration completed successfully!"
-    print_status "You may need to reboot for all module changes to take effect."
+    print_warning "If you have wacom or hid_uclogic modules loaded, you may need to blacklist them manually."
+    print_status "Check the output above for specific commands to run with sudo."
 }
 
 # Run main function

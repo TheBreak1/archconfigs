@@ -168,7 +168,7 @@ while true; do
             run_local_script "pipewire.sh"
             ;;
         6)
-            run_local_script "otd.sh"
+            run_local_script_user "otd.sh"
             ;;
         7)
             run_local_script "wooting.sh"
