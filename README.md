@@ -69,6 +69,7 @@ curl -sSL https://raw.githubusercontent.com/TheBreak1/archconfigs/dev/scripts/st
 - [ ]     плохо начал, надо переписать с перезапусками скрипта от других лиц
 - [ ] pipewire.sh - Переброс конфигов pipewire, спс что гайд обновил
 - [ ]     pipewire-media-session is deprecated and will soon be removed from the repositories. Please use "wireplumber" instead.
+- [ ]     бахнуть скрипт+ для ок железок
 - [x] otd.sh - установка OpenTabletDriver
 - [x]     разобраться с правами
 - [x] wooting.sh - переброс udev правил под Wooting
