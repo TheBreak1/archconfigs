@@ -122,8 +122,8 @@ clone_and_execute_script() {
         rm -rf "$CLONE_DIR"
     fi
     
-    # Clone the repository
-    if git clone "$REPO_URL" "$CLONE_DIR"; then
+    # Clone the repository (dev branch)
+    if git clone -b dev "$REPO_URL" "$CLONE_DIR"; then
         print_success "Repository cloned successfully"
     else
         print_error "Failed to clone repository from $REPO_URL"
