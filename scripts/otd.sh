@@ -62,26 +62,17 @@ install_opentabletdriver() {
 
 # Function to check if modules need to be blacklisted
 check_module_blacklist() {
-    print_status "Checking if kernel modules need to be blacklisted..."
+    print_status "Checking for conflicting kernel modules..."
     
     # Check if wacom module is loaded using sudo
     if sudo lsmod | grep -q wacom; then
-        print_warning "wacom module is currently loaded. You may need to blacklist it."
-        print_status "To blacklist wacom, run:"
-        echo "  echo 'blacklist wacom' | sudo tee -a /etc/modprobe.d/blacklist.conf"
-        echo "  sudo rmmod wacom"
+        print_warning "wacom module detected - may conflict with OpenTabletDriver"
     fi
     
     # Check if hid_uclogic module is loaded using sudo
     if sudo lsmod | grep -q hid_uclogic; then
-        print_warning "hid_uclogic module is currently loaded. You may need to blacklist it."
-        print_status "To blacklist hid_uclogic, run:"
-        echo "  echo 'blacklist hid_uclogic' | sudo tee -a /etc/modprobe.d/blacklist.conf"
-        echo "  sudo rmmod hid_uclogic"
+        print_warning "hid_uclogic module detected - may conflict with OpenTabletDriver"
     fi
-    
-    print_status "Note: Module blacklisting requires root privileges."
-    print_status "You can run these commands manually or use a separate script with sudo."
 }
 
 
@@ -89,14 +80,34 @@ check_module_blacklist() {
 enable_opentabletdriver() {
     print_status "Enabling and starting OpenTabletDriver service..."
     
+    # Get current user info
+    CURRENT_USER=$(whoami)
+    CURRENT_HOME=$(getent passwd "$CURRENT_USER" | cut -d: -f6)
+    print_status "Current user: $CURRENT_USER"
+    print_status "User home: $CURRENT_HOME"
+    
+    # Set proper environment variables for systemd user session
+    export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+    export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u)/bus"
+    
+    print_status "XDG_RUNTIME_DIR: $XDG_RUNTIME_DIR"
+    print_status "DBUS_SESSION_BUS_ADDRESS: $DBUS_SESSION_BUS_ADDRESS"
+    
     # Enable and start the service as the current user
     if systemctl --user enable opentabletdriver --now; then
         print_success "OpenTabletDriver service enabled and started successfully"
     else
         print_error "Failed to enable/start OpenTabletDriver service"
-        print_status "Make sure you have a systemd user session running"
-        print_status "You may need to log out and log back in, or run: systemctl --user daemon-reload"
-        exit 1
+        print_status "Trying with explicit environment variables..."
+        
+        # Try with explicit environment
+        if env XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" systemctl --user enable opentabletdriver --now; then
+            print_success "OpenTabletDriver service enabled and started with explicit environment"
+        else
+            print_error "Failed to enable/start OpenTabletDriver service even with explicit environment"
+            print_status "You may need to log out and log back in to establish a proper user session"
+            exit 1
+        fi
     fi
 }
 
