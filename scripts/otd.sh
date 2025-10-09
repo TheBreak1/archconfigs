@@ -129,6 +129,14 @@ enable_opentabletdriver() {
     
     # Get the original user who invoked sudo
     if [[ -n "$SUDO_USER" ]]; then
+        # Enable linger for the user to allow persistent user sessions
+        print_status "Enabling linger for user $SUDO_USER..."
+        if loginctl enable-linger "$SUDO_USER"; then
+            print_success "Linger enabled for user $SUDO_USER"
+        else
+            print_warning "Failed to enable linger for user $SUDO_USER (may already be enabled)"
+        fi
+        
         # Preserve environment variables for systemd user operations
         if sudo -u "$SUDO_USER" env XDG_RUNTIME_DIR="/run/user/$(id -u "$SUDO_USER")" DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u "$SUDO_USER")/bus" systemctl --user enable opentabletdriver --now; then
             print_success "OpenTabletDriver service enabled and started successfully"
