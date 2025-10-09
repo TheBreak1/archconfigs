@@ -165,7 +165,7 @@ while true; do
             run_local_script_user "lazer.sh"
             ;;
         5)
-            run_local_script "pipewire.sh"
+            run_local_script_user "pipewire.sh"
             ;;
         6)
             run_local_script_user "otd.sh"
