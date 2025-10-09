@@ -108,34 +108,31 @@ download_pipewire() {
         return 1
     fi
     
-    # Enable pipewire-media-session service
-    print_status "Enabling pipewire-media-session service..."
-    if sudo -u "$SUDO_USER" systemctl --user enable pipewire-media-session.service; then
-        print_success "pipewire-media-session service enabled"
-    else
-        print_warning "Failed to enable pipewire-media-session service"
-        print_status "Trying to enable service as user..."
-        if sudo -u "$SUDO_USER" bash -c "systemctl --user enable pipewire-media-session.service"; then
-            print_success "pipewire-media-session service enabled as user"
-        else
-            print_warning "Failed to enable pipewire-media-session service even as user"
-        fi
-    fi
-    
     print_success "pipewire-media-session installation completed!"
-    print_warning "If the service wasn't enabled automatically, please run manually:"
-    print_status "systemctl --user enable pipewire-media-session.service"
-    print_status "systemctl --user start pipewire-media-session.service"
 }
 
 # Function to copy pipewire configuration files
 copy_pipewire_configs() {
     print_status "Copying pipewire configuration files to user config..."
     
-    # Create ~/.config/pipewire directory if it doesn't exist
-    if [[ ! -d "$HOME/.config/pipewire" ]]; then
+    # Ensure user has access to .config folder
+    print_status "Ensuring user has access to .config folder..."
+    if [[ ! -d "/home/$SUDO_USER/.config" ]]; then
+        print_status "Creating ~/.config directory..."
+        if sudo -u "$SUDO_USER" mkdir -p "/home/$SUDO_USER/.config"; then
+            print_success "~/.config directory created"
+        else
+            print_error "Failed to create ~/.config directory"
+            return 1
+        fi
+    else
+        print_warning "~/.config directory already exists"
+    fi
+    
+    # Create ~/.config/pipewire directory if it doesn't exist (as user)
+    if [[ ! -d "/home/$SUDO_USER/.config/pipewire" ]]; then
         print_status "Creating ~/.config/pipewire directory..."
-        if mkdir -p "$HOME/.config/pipewire"; then
+        if sudo -u "$SUDO_USER" mkdir -p "/home/$SUDO_USER/.config/pipewire"; then
             print_success "~/.config/pipewire directory created"
         else
             print_error "Failed to create ~/.config/pipewire directory"
@@ -145,10 +142,10 @@ copy_pipewire_configs() {
         print_warning "~/.config/pipewire directory already exists"
     fi
     
-    # Copy configuration files from system directory
+    # Copy configuration files from system directory (as user)
     if [[ -d "/usr/share/pipewire" ]]; then
         print_status "Copying files from /usr/share/pipewire to ~/.config/pipewire..."
-        if cp -r /usr/share/pipewire/* "$HOME/.config/pipewire/"; then
+        if sudo -u "$SUDO_USER" cp -r /usr/share/pipewire/* "/home/$SUDO_USER/.config/pipewire/"; then
             print_success "Pipewire configuration files copied successfully"
         else
             print_error "Failed to copy pipewire configuration files"
@@ -174,10 +171,10 @@ copy_custom_configs() {
         return 1
     fi
     
-    # Create ~/.config/pipewire directory if it doesn't exist
-    if [[ ! -d "$HOME/.config/pipewire" ]]; then
+    # Create ~/.config/pipewire directory if it doesn't exist (as user)
+    if [[ ! -d "/home/$SUDO_USER/.config/pipewire" ]]; then
         print_status "Creating ~/.config/pipewire directory..."
-        if mkdir -p "$HOME/.config/pipewire"; then
+        if sudo -u "$SUDO_USER" mkdir -p "/home/$SUDO_USER/.config/pipewire"; then
             print_success "~/.config/pipewire directory created"
         else
             print_error "Failed to create ~/.config/pipewire directory"
@@ -185,9 +182,9 @@ copy_custom_configs() {
         fi
     fi
     
-    # Copy custom configuration files
+    # Copy custom configuration files (as user)
     print_status "Copying custom configuration files from $CONFIGS_DIR to ~/.config/pipewire..."
-    if cp -r "$CONFIGS_DIR"/* "$HOME/.config/pipewire/"; then
+    if sudo -u "$SUDO_USER" cp -r "$CONFIGS_DIR"/* "/home/$SUDO_USER/.config/pipewire/"; then
         print_success "Custom pipewire configuration files copied successfully"
     else
         print_error "Failed to copy custom pipewire configuration files"
@@ -195,30 +192,48 @@ copy_custom_configs() {
     fi
 }
 
+# Function to reload services as user
+reload_as_user() {
+    print_status "Reloading pipewire services as user..."
+    
+    # Enable and start pipewire-media-session service as user
+    print_status "Enabling pipewire-media-session service as user..."
+    if sudo -u "$SUDO_USER" systemctl --user enable pipewire-media-session.service; then
+        print_success "pipewire-media-session service enabled"
+    else
+        print_warning "Failed to enable pipewire-media-session service"
+        print_status "Trying alternative method..."
+        if sudo -u "$SUDO_USER" bash -c "systemctl --user enable pipewire-media-session.service"; then
+            print_success "pipewire-media-session service enabled as user"
+        else
+            print_error "Failed to enable pipewire-media-session service even as user"
+            return 1
+        fi
+    fi
+    
+    print_status "Starting pipewire-media-session service as user..."
+    if sudo -u "$SUDO_USER" systemctl --user start pipewire-media-session.service; then
+        print_success "pipewire-media-session service started"
+    else
+        print_warning "Failed to start pipewire-media-session service (may need to restart session)"
+    fi
+}
+
 # Main execution
 main() {
     print_status "Starting pipewire installation..."
+    
+    # Download and install pipewire (first step)
+    download_pipewire
+    
+    # Reload services as user
+    reload_as_user
     
     # Copy pipewire configuration files
     copy_pipewire_configs
     
     # Copy custom pipewire configurations
     copy_custom_configs
-    
-    # Ensure user has access to .config folder
-    print_status "Ensuring user has access to .config folder..."
-    if [[ -d "$HOME/.config" ]]; then
-        if chown -R "$SUDO_USER:$SUDO_USER" "$HOME/.config"; then
-            print_success "User permissions set for .config folder"
-        else
-            print_warning "Failed to set permissions for .config folder"
-        fi
-    else
-        print_warning ".config folder does not exist"
-    fi
-    
-    # Download and install pipewire (last step)
-    download_pipewire
     
     print_success "Pipewire installation completed!"
     print_warning "You may need to restart your session or reboot for changes to take effect"
