@@ -74,6 +74,7 @@ curl -sSL https://raw.githubusercontent.com/TheBreak1/archconfigs/dev/scripts/st
 - [x]     разобраться с правами
 - [x] wooting.sh - переброс udev правил под Wooting
 - [ ]     А под сайо возможно подобное устроить?
+- [ ] osu-mime.sh - Шкриптик поставить автозапуск от стэйбла/лазера
 
 ### ГАЙДЫ
 - [ ] Applist.md - снести к херам
