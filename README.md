@@ -70,8 +70,8 @@ curl -sSL https://raw.githubusercontent.com/TheBreak1/archconfigs/dev/scripts/st
 - [ ] pipewire.sh - Переброс конфигов pipewire, спс что гайд обновил
 - [ ]     глянуть, как подменку кинуть
 - [ ]     pipewire-media-session is deprecated and will soon be removed from the repositories. Please use "wireplumber" instead.
-- [ ] otd.sh - установка OpenTabletDriver
-- [ ]     разобраться с правами
+- [x] otd.sh - установка OpenTabletDriver
+- [x]     разобраться с правами
 - [x] wooting.sh - переброс udev правил под Wooting
 - [ ]     А под сайо возможно подобное устроить?
 
