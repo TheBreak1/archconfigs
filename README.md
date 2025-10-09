@@ -56,7 +56,7 @@ curl -sSL https://raw.githubusercontent.com/TheBreak1/archconfigs/main/scripts/s
 - [X] menu.sh - выбор скриптов с репозитория
 - [X] i3.sh - установка i3 чётко по гайду
 - [ ]     можно лучше тк автоматика
-- [Х] openbox.sh - десктопоподобное на базе Openbox + пара прог
+- [x] openbox.sh - десктопоподобное на базе Openbox + пара прог
 - [ ]     подчистить перенос
 - [ ]     валлпапер?
 - [ ]     rEFInd
