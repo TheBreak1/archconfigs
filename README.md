@@ -44,6 +44,11 @@
 ```
 curl -sSL https://raw.githubusercontent.com/TheBreak1/archconfigs/main/scripts/start.sh | sudo bash
 ```
+dev branch
+```
+curl -sSL https://raw.githubusercontent.com/TheBreak1/archconfigs/dev/scripts/start.sh | sudo bash
+```
+
 Сначала качается стартовый скрипт, который выгружает репозиторий, ставит самую базу для работы в терминале и запускает `menu.sh`, через который уже на выбор стартует всё остальное.
 
 ## ТУДУ
