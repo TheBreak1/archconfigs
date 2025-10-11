@@ -17,7 +17,7 @@
 #xfce-mcs-manager &
 
 rofi -show drun &
-setxkbmap -layout us,ru -variant -option grp:alt_shift_toggle,terminate &
+setxkbmap -layout us,ru -option grp:alt_shift_toggle &
 nitrogen --restore &
 export QT_QPA_PLATFORMTHEME=qt5ct &
 tint2 &
