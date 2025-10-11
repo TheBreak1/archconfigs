@@ -4,8 +4,6 @@
 
 Так же здесь лежат уже готовые конфиги для приложений, они ставятся по гайду во время установки, но на всякий расписано, как это сделать самому. Ведутся работы по автоматизации - лмк @t_brk1
 
-0168:err:mmdevapi:init_driver No driver from L"pulse,alsa,oss,coreaudio" could be initialized. Maybe check dependencies with WINEDEBUG=warn+module.
-
 ## Список гайдов
   
   - [Установка Arch Linux](guides/Install.md)
@@ -58,6 +56,8 @@ curl -sSL https://raw.githubusercontent.com/TheBreak1/archconfigs/dev/scripts/st
 - [ ]     url покороче
 - [ ]     тарболы куда-то закинуть, долго качает
 - [ ]     по возможности переделать всё под запуск с archiso
+- [x] lazer.sh - хорошо стоит.....
+- [ ]     mime не проверил
 - [X] menu.sh - выбор скриптов с репозитория
 - [X] i3.sh - установка i3 чётко по гайду
 - [ ]     можно лучше тк автоматика
@@ -68,18 +68,19 @@ curl -sSL https://raw.githubusercontent.com/TheBreak1/archconfigs/dev/scripts/st
 - [ ] stable.sh - установка osu!stable, вайна для х32 и ещё вайна
 - [ ]     плохо начал, надо переписать с перезапусками скрипта от других лиц
 - [ ] pipewire.sh - Переброс конфигов pipewire, спс что гайд обновил
-- [ ]     глянуть, как подменку кинуть
 - [ ]     pipewire-media-session is deprecated and will soon be removed from the repositories. Please use "wireplumber" instead.
+- [ ]     бахнуть скрипт+ для ок железок
 - [x] otd.sh - установка OpenTabletDriver
 - [x]     разобраться с правами
 - [x] wooting.sh - переброс udev правил под Wooting
 - [ ]     А под сайо возможно подобное устроить?
+- [ ] osu-mime.sh - Шкриптик поставить автозапуск от стэйбла/лазера
 
 ### ГАЙДЫ
-- [ ] Applist.md - снести к херам
+- [ ] Applist.md - снести
 - [x] Dualboot.md - я доволен, тестил на железе
 - [x] FS.md - 0 движений в консоли, спасибо скрипт
-- [x] Install.md - обновить под реалии скрипта и уменьшить движения = не ставить проги через archinstall
+- [x] Install.md - обновить под скрипт и уменьшить движения = не ставить проги через archinstall
 - [ ] Links.md - не добил под стэйбл, сорь
 - [ ] osu!wine.md - вообще под копирку надо
 - [ ] OTD.md - тоже
