@@ -20,3 +20,4 @@ rofi -show drun &
 setxkbmap -layout us,ru -variant -option grp:alt_shift_toggle,terminate &
 nitrogen --restore &
 export QT_QPA_PLATFORMTHEME=qt5ct &
+tint2 &

@@ -97,3 +97,5 @@ curl -sSL https://raw.githubusercontent.com/TheBreak1/archconfigs/dev/scripts/st
 [**The_Break**](https://osu.ppy.sh/users/8610746) -- Обновление гайда, конфиги Openbox
 
 **???** -- Пропатченый Wine
+
+[**IanLeCorbeau**](https://github.com/IanLeCorbeau/tint2-executors) -- executors for tint2

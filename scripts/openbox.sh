@@ -70,7 +70,7 @@ echo "Configs directory (resolved): $CONFIGS_DIR"
 install_desktop_components() {
     echo "Installing desktop components..."
     # Installing base desktop (requires root):
-    pacman -S --noconfirm --needed openbox ly alacritty rofi adapta-gtk-theme noto-fonts lxappearance lxappearance-obconf nitrogen
+    pacman -S --noconfirm --needed openbox ly alacritty rofi adapta-gtk-theme noto-fonts lxappearance lxappearance-obconf nitrogen tint2
     
     # Ensure ~/.config directory exists with proper permissions
     print_status "Ensuring ~/.config directory exists with proper permissions"
@@ -118,6 +118,18 @@ install_desktop_components() {
             print_warning "Rofi config directory not found at: $CONFIGS_DIR/rofi"
         fi
         
+        # Copy tint2 config
+        if [ -d "$CONFIGS_DIR/tint2" ]; then
+            SRC_DIR="$CONFIGS_DIR/tint2"
+            DST_DIR="$TARGET_HOME/.config/tint2"
+            install -d -m 0755 -o "$TARGET_UID" -g "$TARGET_GID" "$DST_DIR"
+            cp -av "$SRC_DIR/." "$DST_DIR/"
+            chown -R "$TARGET_UID":"$TARGET_GID" "$DST_DIR"
+            print_success "Tint2 config copied to $DST_DIR"
+        else
+            print_warning "Tint2 config directory not found at: $CONFIGS_DIR/tint2"
+        fi
+        
         print_success "Configuration files copying completed!"
     else
         print_error "Configs directory not found at: $CONFIGS_DIR"
@@ -161,7 +173,7 @@ install_applications() {
     echo -e "${BLUE}==========================================${NC}"
     echo -e "${YELLOW}Openbox Configuration Apps Installation${NC}"
     echo -e "${BLUE}==========================================${NC}"
-    echo -e "${GREEN}AUR packages for installation:${NC} obkey obmenu"
+    echo -e "${GREEN}AUR packages for installation:${NC} obkey obmenu obconf"
     echo -e "${YELLOW}Do you want to install AUR packages? (y/n):${NC} "
     echo -e "${YELLOW}This may take VERY long time, come back to it later!${NC} "
     read -r install_aur
@@ -170,8 +182,8 @@ install_applications() {
         print_status "Attempting to install AUR packages with paru (as $TARGET_USER)"
         if command -v paru >/dev/null 2>&1; then
             print_status "paru found at $(command -v paru)"
-            print_status "Installing: obkey obmenu"
-            sudo -u "$TARGET_USER" HOME="$TARGET_HOME" paru -S --noconfirm --needed obkey obmenu || print_warning "paru installation of obkey/obmenu failed"
+            print_status "Installing: obkey obmenu obconf"
+            sudo -u "$TARGET_USER" HOME="$TARGET_HOME" paru -S --noconfirm --needed obkey obmenu obconf || print_warning "paru installation of obkey/obmenu failed"
         else
             print_warning "paru not found; skipping AUR install of obkey and obmenu"
         fi

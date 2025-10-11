@@ -1,4 +1,3 @@
-<?xml version="1.0"?>
 <openbox_config xmlns="http://openbox.org/3.4/rc" xmlns:xi="http://www.w3.org/2001/XInclude">
   <resistance>
     <strength>10</strength>
@@ -176,42 +175,6 @@
   </dock>
   <keyboard>
     <chainQuitKey>C-g</chainQuitKey>
-    <keybind key="C-A-Left">
-      <action name="GoToDesktop"/>
-    </keybind>
-    <keybind key="C-A-Right">
-      <action name="GoToDesktop"/>
-    </keybind>
-    <keybind key="C-A-Up">
-      <action name="GoToDesktop"/>
-    </keybind>
-    <keybind key="C-A-Down">
-      <action name="GoToDesktop"/>
-    </keybind>
-    <keybind key="S-A-Left">
-      <action name="SendToDesktop"/>
-    </keybind>
-    <keybind key="S-A-Right">
-      <action name="SendToDesktop"/>
-    </keybind>
-    <keybind key="S-A-Up">
-      <action name="SendToDesktop"/>
-    </keybind>
-    <keybind key="S-A-Down">
-      <action name="SendToDesktop"/>
-    </keybind>
-    <keybind key="W-F1">
-      <action name="GoToDesktop"/>
-    </keybind>
-    <keybind key="W-F2">
-      <action name="GoToDesktop"/>
-    </keybind>
-    <keybind key="W-F3">
-      <action name="GoToDesktop"/>
-    </keybind>
-    <keybind key="W-F4">
-      <action name="GoToDesktop"/>
-    </keybind>
     <keybind key="W-d">
       <action name="ToggleShowDesktop"/>
     </keybind>
@@ -240,18 +203,6 @@
         <desktop>yes</desktop>
       </action>
     </keybind>
-    <keybind key="W-S-Right">
-      <action name="DirectionalCycleWindows"/>
-    </keybind>
-    <keybind key="W-S-Left">
-      <action name="DirectionalCycleWindows"/>
-    </keybind>
-    <keybind key="W-S-Up">
-      <action name="DirectionalCycleWindows"/>
-    </keybind>
-    <keybind key="W-S-Down">
-      <action name="DirectionalCycleWindows"/>
-    </keybind>
     <keybind key="W-space">
       <action name="Execute">
         <command>rofi -show drun</command>
@@ -262,9 +213,14 @@
         <command>nemo</command>
       </action>
     </keybind>
-    <keybind key="W-t">
+    <keybind key="W-Return">
       <action name="Execute">
         <command>alacritty</command>
+      </action>
+    </keybind>
+    <keybind key="W-t">
+      <action name="Execute">
+        <command>Telegram -- %u</command>
       </action>
     </keybind>
     <keybind key="W-w">
@@ -278,6 +234,104 @@
     <keybind key="W-r">
       <action name="Execute">
         <command>rofi -show run</command>
+      </action>
+    </keybind>
+    <keybind key="W-1">
+      <action name="Desktop">
+        <desktop>2</desktop>
+      </action>
+      <action name="DesktopPrevious"/>
+    </keybind>
+    <keybind key="W-2">
+      <action name="Desktop">
+        <desktop>2</desktop>
+      </action>
+    </keybind>
+    <keybind key="W-3">
+      <action name="Desktop">
+        <desktop>3</desktop>
+      </action>
+    </keybind>
+    <keybind key="W-4">
+      <action name="Desktop">
+        <desktop>4</desktop>
+      </action>
+    </keybind>
+    <keybind key="W-S-1">
+      <action name="SendToDesktop">
+        <desktop>2</desktop>
+      </action>
+      <action name="SendToDesktopPrevious"/>
+    </keybind>
+    <keybind key="W-S-2">
+      <action name="SendToDesktop">
+        <desktop>2</desktop>
+      </action>
+    </keybind>
+    <keybind key="W-S-3">
+      <action name="SendToDesktop">
+        <desktop>3</desktop>
+      </action>
+    </keybind>
+    <keybind key="W-S-4">
+      <action name="SendToDesktop">
+        <desktop>4</desktop>
+      </action>
+    </keybind>
+    <keybind key="W-Left">
+      <action name="UnmaximizeFull"/>
+      <action name="MaximizeVert"/>
+      <action name="Raise"/>
+      <action name="MoveResizeTo">
+        <x>0</x>
+        <y>0</y>
+        <width>50%</width>
+      </action>
+    </keybind>
+    <keybind key="W-Right">
+      <action name="UnmaximizeFull"/>
+      <action name="MaximizeVert"/>
+      <action name="Raise"/>
+      <action name="MoveResizeTo">
+        <x>50%</x>
+        <y>0</y>
+        <width>50%</width>
+      </action>
+    </keybind>
+    <keybind key="W-Up">
+      <action name="MaximizeFull"/>
+    </keybind>
+    <keybind key="W-Down">
+      <action name="Iconify"/>
+    </keybind>
+    <keybind key="C-A-Delete">
+      <action name="Execute">
+        <command>alacritty -e btop</command>
+      </action>
+    </keybind>
+    <keybind key="XF86MonBrightnessUp">
+      <action name="Execute">
+        <command>brightnessctl set +10%</command>
+      </action>
+    </keybind>
+    <keybind key="XF86MonBrightnessDown">
+      <action name="Execute">
+        <command>brightnessctl set 10%-</command>
+      </action>
+    </keybind>
+    <keybind key="XF86AudioLowerVolume">
+      <action name="Execute">
+        <command>pactl set-sink-volume @DEFAULT_SINK@ -5%</command>
+      </action>
+    </keybind>
+    <keybind key="XF86AudioRaiseVolume">
+      <action name="Execute">
+        <command>pactl set-sink-volume @DEFAULT_SINK@ +5%</command>
+      </action>
+    </keybind>
+    <keybind key="XF86AudioMute">
+      <action name="Execute">
+        <command>pactl set-sink-mute @DEFAULT_SINK@ toggle</command>
       </action>
     </keybind>
   </keyboard>
