@@ -117,6 +117,42 @@ enable_opentabletdriver() {
     fi
 }
 
+# Function to check opentabletdriver service status
+check_opentabletdriver_status() {
+    print_status "Checking OpenTabletDriver service status..."
+    
+    # Check if service exists
+    if ! systemctl --user list-unit-files | grep -q opentabletdriver; then
+        print_error "OpenTabletDriver service not found in systemd"
+        print_status "Service files may not have been installed correctly"
+        return 1
+    fi
+    
+    # Check service status
+    print_status "Service status:"
+    systemctl --user status opentabletdriver --no-pager || true
+    
+    # Check if service is enabled
+    if systemctl --user is-enabled opentabletdriver &>/dev/null; then
+        print_success "OpenTabletDriver service is enabled"
+    else
+        print_warning "OpenTabletDriver service is not enabled"
+        print_status "You may need to enable it manually with: systemctl --user enable opentabletdriver"
+        return 1
+    fi
+    
+    # Check if service is active
+    if systemctl --user is-active opentabletdriver &>/dev/null; then
+        print_success "OpenTabletDriver service is active"
+    else
+        print_warning "OpenTabletDriver service is not active"
+        print_status "You may need to start it manually with: systemctl --user start opentabletdriver"
+        return 1
+    fi
+    
+    return 0
+}
+
 # Main execution
 main() {
     print_status "Starting OpenTabletDriver installation and configuration..."
@@ -126,6 +162,7 @@ main() {
     install_opentabletdriver
     handle_module_blacklist
     enable_opentabletdriver
+    check_opentabletdriver_status
     
     echo "=========================================="
     print_success "OpenTabletDriver installation and configuration completed successfully!"
