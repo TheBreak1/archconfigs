@@ -39,20 +39,12 @@ check_user() {
     print_success "Running as user: $(whoami)"
 }
 
-# Function to install pipewire-media-session using paru
+# Function to install pipewire-media-session using pacman
 install_pipewire() {
-    print_status "Installing pipewire-media-session using paru..."
-    
-    # Check if paru is installed
-    if ! command -v paru &> /dev/null; then
-        print_error "paru is not installed. Please restart the script or install it manually."
-        print_status "You can install it with: sudo pacman -S paru if Chaotic AUR is configured."
-        print_status "If not, please refer to paru's Github page."
-        exit 1
-    fi
+    print_status "Installing pipewire-media-session using pacman..."
     
     # Install pipewire-media-session
-    if paru -S --noconfirm pipewire-media-session; then
+    if sudo pacman -S --noconfirm pipewire-media-session; then
         print_success "pipewire-media-session installed successfully"
     else
         print_error "Failed to install pipewire-media-session"
@@ -199,7 +191,7 @@ main() {
     
     echo "=========================================="
     print_success "Pipewire installation and configuration completed successfully!"
-    print_status "All pipewire services have been automatically configured."
+    print_status "All pipewire services have been automatically configured with pipewire-media-session."
 }
 
 # Run main function if script is executed directly
