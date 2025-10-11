@@ -43,8 +43,8 @@ check_user() {
 install_pipewire() {
     print_status "Installing pipewire-media-session using pacman..."
     
-    # Install pipewire-media-session
-    if sudo pacman -S --noconfirm --overwrite='*' pipewire-media-session; then
+    # Install pipewire-media-session (will replace wireplumber if present)
+    if sudo pacman -S --noconfirm --ask=4 pipewire-media-session; then
         print_success "pipewire-media-session installed successfully"
     else
         print_error "Failed to install pipewire-media-session"
