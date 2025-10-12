@@ -131,12 +131,12 @@ setup_wine_prefix() {
     print_warning "This process may take several minutes and may require user interaction."
     print_warning "Do not restart. DO NOT INSTALL MONO!"
     
-    # Get the actual user's home directory (not root's)
-    local user_home="/home/$SUDO_USER"
+    # Get the current user's home directory
+    local user_home="$HOME"
     local wine_prefix="$user_home/.wineosu"
     
-    # Setup Wine prefix and install components as the actual user
-    if sudo -u "$SUDO_USER" env WINEARCH=win32 WINEPREFIX="$wine_prefix" winetricks dotnet45 cjkfonts gdiplus; then
+    # Setup Wine prefix and install components
+    if env WINEARCH=win32 WINEPREFIX="$wine_prefix" winetricks dotnet45 cjkfonts gdiplus; then
         print_success "Wine prefix setup completed successfully!"
     else
         print_error "Failed to setup Wine prefix or install components."
@@ -152,17 +152,14 @@ setup_wine_prefix() {
 install_osu() {
     print_status "Setting up osu! installation..."
     
-    # Get the actual user's home directory (not root's)
-    local user_home="/home/$SUDO_USER"
+    # Get the current user's home directory
+    local user_home="$HOME"
     local osu_dir="$user_home/osu"
     local wine_prefix="$user_home/.wineosu"
     
     # Create osu! directory in user's home
     print_status "Creating osu! directory in user's home..."
     mkdir -p "$osu_dir"
-    
-    # Set proper ownership
-    chown -R "$SUDO_USER:$SUDO_USER" "$osu_dir"
     
     # Download osu! installer
     print_status "Downloading osu! installer..."
@@ -173,15 +170,12 @@ install_osu() {
         return 1
     fi
     
-    # Set proper ownership of downloaded file
-    chown "$SUDO_USER:$SUDO_USER" "$osu_dir/osu\!.exe"
-    
-    # Run osu! installer with Wine as the actual user
+    # Run osu! installer with Wine
     print_status "Running osu! installer..."
     print_warning "The osu! installer will now open. Follow the installation prompts."
     print_warning "Do not restart during installation!"
     
-    if sudo -u "$SUDO_USER" env WINEARCH=win32 WINEPREFIX="$wine_prefix" wine "$osu_dir/osu\!.exe"; then
+    if env WINEARCH=win32 WINEPREFIX="$wine_prefix" wine "$osu_dir/osu\!.exe"; then
         print_success "osu! installation completed!"
     else
         print_error "osu! installation failed or was interrupted."
@@ -210,8 +204,8 @@ manage_pipewire_session() {
     print_status "Copying pipewire configuration files to user config..."
     
     # Get current user info
-    CURRENT_USER="$SUDO_USER"
-    CURRENT_HOME="/home/$SUDO_USER"
+    CURRENT_USER="$(whoami)"
+    CURRENT_HOME="$HOME"
     print_status "Current user: $CURRENT_USER"
     print_status "User home: $CURRENT_HOME"
     
@@ -219,7 +213,7 @@ manage_pipewire_session() {
     print_status "Ensuring user has access to .config folder..."
     if [[ ! -d "$CURRENT_HOME/.config" ]]; then
         print_status "Creating ~/.config directory..."
-        if sudo -u "$SUDO_USER" mkdir -p "$CURRENT_HOME/.config"; then
+        if mkdir -p "$CURRENT_HOME/.config"; then
             print_success "~/.config directory created"
         else
             print_error "Failed to create ~/.config directory"
@@ -232,7 +226,7 @@ manage_pipewire_session() {
     # Create ~/.config/pipewire directory if it doesn't exist
     if [[ ! -d "$CURRENT_HOME/.config/pipewire" ]]; then
         print_status "Creating ~/.config/pipewire directory..."
-        if sudo -u "$SUDO_USER" mkdir -p "$CURRENT_HOME/.config/pipewire"; then
+        if mkdir -p "$CURRENT_HOME/.config/pipewire"; then
             print_success "~/.config/pipewire directory created"
         else
             print_error "Failed to create ~/.config/pipewire directory"
@@ -245,7 +239,7 @@ manage_pipewire_session() {
     # Copy configuration files from system directory
     if [[ -d "/usr/share/pipewire" ]]; then
         print_status "Copying files from /usr/share/pipewire to ~/.config/pipewire..."
-        if sudo -u "$SUDO_USER" cp -r /usr/share/pipewire/* "$CURRENT_HOME/.config/pipewire/"; then
+        if cp -r /usr/share/pipewire/* "$CURRENT_HOME/.config/pipewire/"; then
             print_success "Pipewire configuration files copied successfully"
         else
             print_error "Failed to copy pipewire configuration files"
@@ -271,7 +265,7 @@ manage_pipewire_session() {
     
     # Copy custom configuration files
     print_status "Copying custom configuration files from $CONFIGS_DIR to ~/.config/pipewire..."
-    if sudo -u "$SUDO_USER" cp -r "$CONFIGS_DIR"/* "$CURRENT_HOME/.config/pipewire/"; then
+    if cp -r "$CONFIGS_DIR"/* "$CURRENT_HOME/.config/pipewire/"; then
         print_success "Custom pipewire configuration files copied successfully"
     else
         print_error "Failed to copy custom pipewire configuration files"
@@ -282,14 +276,14 @@ manage_pipewire_session() {
     print_status "Enabling and starting pipewire-media-session service..."
     
     # Set proper environment variables for systemd user session
-    export XDG_RUNTIME_DIR="/run/user/$(id -u "$SUDO_USER")"
-    export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u "$SUDO_USER")/bus"
+    export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+    export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u)/bus"
     
     print_status "XDG_RUNTIME_DIR: $XDG_RUNTIME_DIR"
     print_status "DBUS_SESSION_BUS_ADDRESS: $DBUS_SESSION_BUS_ADDRESS"
     
     # Enable and start the service as the current user
-    if sudo -u "$SUDO_USER" env XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" systemctl --user enable pipewire-media-session --now; then
+    if systemctl --user enable pipewire-media-session --now; then
         print_success "pipewire-media-session service enabled and started successfully"
     else
         print_error "Failed to enable/start pipewire-media-session service"

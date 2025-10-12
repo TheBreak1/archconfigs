@@ -159,7 +159,7 @@ while true; do
             run_local_script "openbox.sh"
             ;;
         3)
-            run_local_script "stable.sh"
+            run_local_script_user "stable.sh"
             ;;
         4)
             run_local_script_user "lazer.sh"
