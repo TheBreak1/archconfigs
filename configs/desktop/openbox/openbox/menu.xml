@@ -70,7 +70,7 @@
 			<menu id="None-845856-33452-711151" label="System">
 				<item label="Video">
 					<action name="Execute">
-						<execute>lxrandr</execute>
+						<execute>alacritty -e pkexec lxrandr</execute>
 					</action>
 				</item>
 				<item label="Nvidia">
