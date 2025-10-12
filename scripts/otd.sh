@@ -60,24 +60,40 @@ install_opentabletdriver() {
     fi
 }
 
+# Function to blacklist conflicting kernel modules
+blacklist_modules() {
+    print_status "Blacklisting conflicting kernel modules..."
+    
+    # Blacklist wacom module
+    print_status "Blacklisting wacom module..."
+    echo "blacklist wacom" | sudo tee -a /etc/modprobe.d/blacklist.conf
+    print_success "wacom module blacklisted"
+    
+    # Blacklist hid_uclogic module
+    print_status "Blacklisting hid_uclogic module..."
+    echo "blacklist hid_uclogic" | sudo tee -a /etc/modprobe.d/blacklist.conf
+    print_success "hid_uclogic module blacklisted"
+}
+
 # Function to handle conflicting kernel modules
 handle_module_blacklist() {
     print_status "Checking for conflicting kernel modules..."
     
-    # Check if wacom module is loaded and blacklist it
+    # Blacklist modules regardless of current state
+    blacklist_modules
+    
+    # Check if wacom module is loaded and remove it
     if sudo lsmod | grep -q wacom; then
-        print_warning "wacom module detected - blacklisting and removing..."
-        echo "blacklist wacom" | sudo tee -a /etc/modprobe.d/blacklist.conf
+        print_warning "wacom module detected - removing..."
         sudo rmmod wacom
-        print_success "wacom module blacklisted and removed"
+        print_success "wacom module removed"
     fi
     
-    # Check if hid_uclogic module is loaded and blacklist it
+    # Check if hid_uclogic module is loaded and remove it
     if sudo lsmod | grep -q hid_uclogic; then
-        print_warning "hid_uclogic module detected - blacklisting and removing..."
-        echo "blacklist hid_uclogic" | sudo tee -a /etc/modprobe.d/blacklist.conf
+        print_warning "hid_uclogic module detected - removing..."
         sudo rmmod hid_uclogic
-        print_success "hid_uclogic module blacklisted and removed"
+        print_success "hid_uclogic module removed"
     fi
 }
 
