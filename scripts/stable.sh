@@ -91,7 +91,7 @@ install_dependencies() {
     fi
 }
 
-# Function to install custom Wine version. This needs either to be moved to a single repo or cloud for speed.
+# Function to install Wine with 32-bit support.
 install_custom_wine() {
     print_status "Installing custom Wine 9.22-1..."
     
@@ -100,8 +100,12 @@ install_custom_wine() {
     
     # Download Wine package
     print_status "Downloading Wine 9.22-1 package..."
-    if wget https://github.com/Vudek/wine-9.22-1-x86_64/releases/download/wine-9.22-1-x86_64.pkg.tar.zst/wine-9.22-1-x86_64.pkg.tar.zst; then
+    if wget https://files.lopij.xyz/files/94b1719101a66673.zst; then
         print_success "Wine package downloaded successfully!"
+        # Rename the downloaded file to wine1.tar.zst
+        print_status "Renaming downloaded file to wine1.tar.zst..."
+        mv 94b1719101a66673.zst wine1.tar.zst
+        print_success "File renamed successfully!"
     else
         print_error "Failed to download Wine package."
         return 1
@@ -109,7 +113,7 @@ install_custom_wine() {
     
     # Install Wine package
     print_status "Installing Wine 9.22-1..."
-    if sudo pacman -U wine-9.22-1-x86_64.pkg.tar.zst; then
+    if sudo pacman -U wine1.tar.zst; then
         print_success "Wine 9.22-1 installed successfully!"
     else
         print_error "Failed to install Wine package. go play lazer"
@@ -193,34 +197,103 @@ install_osu() {
 manage_pipewire_session() {
     print_status "Managing pipewire session manager..."
     
-    # Remove wireplumber if installed
-    if pacman -Q wireplumber >/dev/null 2>&1; then
-        print_status "Removing wireplumber..."
-        if pacman -R --noconfirm wireplumber; then
-            print_success "wireplumber removed successfully"
-        else
-            print_error "Failed to remove wireplumber"
-            return 1
-        fi
-    else
-        print_warning "wireplumber is not installed"
-    fi
-    
-    # Install pipewire-media-session
-    print_status "Installing pipewire-media-session..."
-    if pacman -S --noconfirm pipewire-media-session; then
+    # Install pipewire-media-session using pacman (will replace wireplumber if present)
+    print_status "Installing pipewire-media-session using pacman..."
+    if sudo pacman -S --noconfirm --ask=4 pipewire-media-session; then
         print_success "pipewire-media-session installed successfully"
     else
         print_error "Failed to install pipewire-media-session"
         return 1
     fi
     
-    # Enable the service (run as the actual user, not root)
-    print_status "Enabling pipewire-media-session service..."
-    if sudo -u "$SUDO_USER" systemctl --user enable pipewire-media-session.service; then
-        print_success "pipewire-media-session service enabled"
+    # Copy pipewire configuration files
+    print_status "Copying pipewire configuration files to user config..."
+    
+    # Get current user info
+    CURRENT_USER="$SUDO_USER"
+    CURRENT_HOME="/home/$SUDO_USER"
+    print_status "Current user: $CURRENT_USER"
+    print_status "User home: $CURRENT_HOME"
+    
+    # Ensure user has access to .config folder
+    print_status "Ensuring user has access to .config folder..."
+    if [[ ! -d "$CURRENT_HOME/.config" ]]; then
+        print_status "Creating ~/.config directory..."
+        if sudo -u "$SUDO_USER" mkdir -p "$CURRENT_HOME/.config"; then
+            print_success "~/.config directory created"
+        else
+            print_error "Failed to create ~/.config directory"
+            return 1
+        fi
     else
-        print_error "Failed to enable pipewire-media-session service"
+        print_warning "~/.config directory already exists"
+    fi
+    
+    # Create ~/.config/pipewire directory if it doesn't exist
+    if [[ ! -d "$CURRENT_HOME/.config/pipewire" ]]; then
+        print_status "Creating ~/.config/pipewire directory..."
+        if sudo -u "$SUDO_USER" mkdir -p "$CURRENT_HOME/.config/pipewire"; then
+            print_success "~/.config/pipewire directory created"
+        else
+            print_error "Failed to create ~/.config/pipewire directory"
+            return 1
+        fi
+    else
+        print_warning "~/.config/pipewire directory already exists"
+    fi
+    
+    # Copy configuration files from system directory
+    if [[ -d "/usr/share/pipewire" ]]; then
+        print_status "Copying files from /usr/share/pipewire to ~/.config/pipewire..."
+        if sudo -u "$SUDO_USER" cp -r /usr/share/pipewire/* "$CURRENT_HOME/.config/pipewire/"; then
+            print_success "Pipewire configuration files copied successfully"
+        else
+            print_error "Failed to copy pipewire configuration files"
+            return 1
+        fi
+    else
+        print_error "/usr/share/pipewire directory not found"
+        return 1
+    fi
+    
+    # Copy custom pipewire configurations
+    print_status "Copying custom pipewire configurations..."
+    
+    # Get the script directory to find the configs folder
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    CONFIGS_DIR="$SCRIPT_DIR/../configs/pipewire"
+    
+    # Check if the configs directory exists
+    if [[ ! -d "$CONFIGS_DIR" ]]; then
+        print_error "Configs directory not found: $CONFIGS_DIR"
+        return 1
+    fi
+    
+    # Copy custom configuration files
+    print_status "Copying custom configuration files from $CONFIGS_DIR to ~/.config/pipewire..."
+    if sudo -u "$SUDO_USER" cp -r "$CONFIGS_DIR"/* "$CURRENT_HOME/.config/pipewire/"; then
+        print_success "Custom pipewire configuration files copied successfully"
+    else
+        print_error "Failed to copy custom pipewire configuration files"
+        return 1
+    fi
+    
+    # Enable and start pipewire-media-session service
+    print_status "Enabling and starting pipewire-media-session service..."
+    
+    # Set proper environment variables for systemd user session
+    export XDG_RUNTIME_DIR="/run/user/$(id -u "$SUDO_USER")"
+    export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u "$SUDO_USER")/bus"
+    
+    print_status "XDG_RUNTIME_DIR: $XDG_RUNTIME_DIR"
+    print_status "DBUS_SESSION_BUS_ADDRESS: $DBUS_SESSION_BUS_ADDRESS"
+    
+    # Enable and start the service as the current user
+    if sudo -u "$SUDO_USER" env XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" systemctl --user enable pipewire-media-session --now; then
+        print_success "pipewire-media-session service enabled and started successfully"
+    else
+        print_error "Failed to enable/start pipewire-media-session service"
+        print_status "You may need to log out and log back in to establish a proper user session"
         return 1
     fi
 }

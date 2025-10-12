@@ -54,7 +54,7 @@ curl -sSL https://raw.githubusercontent.com/TheBreak1/archconfigs/dev/scripts/st
 ### СКРИПТЫ
 - [X] start.sh - загрузка репы и запуск menu.sh
 - [ ]     url покороче
-- [ ]     тарболы куда-то закинуть, долго качает
+- [x]     тарболы куда-то закинуть, долго качает
 - [ ]     по возможности переделать всё под запуск с archiso
 - [x] lazer.sh - хорошо стоит.....
 - [ ]     mime не проверил
@@ -67,7 +67,7 @@ curl -sSL https://raw.githubusercontent.com/TheBreak1/archconfigs/dev/scripts/st
 - [ ]     rEFInd
 - [ ] stable.sh - установка osu!stable, вайна для х32 и ещё вайна
 - [ ]     плохо начал, надо переписать с перезапусками скрипта от других лиц
-- [ ] pipewire.sh - Переброс конфигов pipewire, спс что гайд обновил
+- [x] pipewire.sh - Переброс конфигов pipewire, спс что гайд обновил
 - [ ]     pipewire-media-session is deprecated and will soon be removed from the repositories. Please use "wireplumber" instead.
 - [ ]     бахнуть скрипт+ для ок железок
 - [x] otd.sh - установка OpenTabletDriver
