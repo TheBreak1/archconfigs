@@ -123,7 +123,7 @@ clone_and_execute_script() {
     fi
     
     # Clone the repository (dev branch)
-    if git clone -b dev "$REPO_URL" "$CLONE_DIR"; then
+    if git clone -b dev --depth 1 "$REPO_URL" "$CLONE_DIR"; then
         print_success "Repository cloned successfully"
     else
         print_error "Failed to clone repository from $REPO_URL"
