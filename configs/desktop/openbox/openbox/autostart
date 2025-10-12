@@ -21,3 +21,6 @@ setxkbmap -layout us,ru -option grp:alt_shift_toggle &
 nitrogen --restore &
 export QT_QPA_PLATFORMTHEME=qt5ct &
 tint2 &
+
+# Temporary fix for OpenTabletDriver not starting on boot
+/usr/bin/otd-daemon &

@@ -131,7 +131,7 @@ run_local_script_user() {
 # Function to show main menu. ADD NEW SCRIPTS HERE.
 show_menu() {
     echo -e "${BLUE}Available Scripts:${NC}"
-    echo -e "${GREEN}1.${NC} Install i3 desktop"
+    echo -e "${GREEN}1.${NC} Install i3 desktop (legacy)"
     echo -e "${GREEN}2.${NC} Install Openbox desktop"
     echo -e "${GREEN}3.${NC} Install wine + osu!stable"
     echo -e "${GREEN}4.${NC} Install osu!lazer"
