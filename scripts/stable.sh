@@ -129,18 +129,14 @@ install_osu() {
     print_warning "Do not restart during installation!"
     
     # Run osu! installer with Wine
-    if WINEARCH=win32 WINEPREFIX=~/.wineosu wine ~/osu/osu\!.exe; then
-        print_success "osu! installation completed!"
-        
-        # Warn about game launch and ask to close it
-        print_warning "osu! will now launch automatically."
-        print_warning "Please close the game when you're done testing it."
-        echo
-        read -p "Press Enter when you have closed osu! to continue..."
-    else
-        print_error "osu! installation failed or was interrupted"
-        return 1
-    fi
+    WINEARCH=win32 WINEPREFIX=~/.wineosu wine ~/osu/osu\!.exe
+    print_success "osu! installation completed!"
+    
+    # Warn about game launch and ask to close it
+    print_warning "osu! will now launch automatically."
+    print_warning "Please close the game when you're done testing it."
+    echo
+    read -p "Press Enter when you have closed osu! to continue..."
 }
 
 # Function to verify installation and troubleshoot
@@ -201,6 +197,47 @@ verify_installation() {
     esac
 }
 
+# Function to copy stable files
+copy_stable_files() {
+    print_status "Copying stable files..."
+    
+    # Get the script directory to find the stable_files folder
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    STABLE_FILES_DIR="$SCRIPT_DIR/../stable_files"
+    
+    # Check if the stable_files directory exists
+    if [[ ! -d "$STABLE_FILES_DIR" ]]; then
+        print_error "stable_files directory not found: $STABLE_FILES_DIR"
+        return 1
+    fi
+    
+    # Create ~/.local/bin directory if it doesn't exist
+    mkdir -p ~/.local/bin
+    
+    # Copy osu script to ~/.local/bin/osu
+    print_status "Copying osu script to ~/.local/bin/osu..."
+    if cp "$STABLE_FILES_DIR/osu" ~/.local/bin/osu; then
+        print_success "osu script copied successfully!"
+        # Make it executable
+        chmod +x ~/.local/bin/osu
+    else
+        print_error "Failed to copy osu script"
+        return 1
+    fi
+    
+    # Create ~/.local/share/applications directory if it doesn't exist
+    mkdir -p ~/.local/share/applications
+    
+    # Copy osu.desktop to ~/.local/share/applications/osu.desktop
+    print_status "Copying osu.desktop to ~/.local/share/applications/osu.desktop..."
+    if cp "$STABLE_FILES_DIR/osu.desktop" ~/.local/share/applications/osu.desktop; then
+        print_success "osu.desktop copied successfully!"
+    else
+        print_error "Failed to copy osu.desktop"
+        return 1
+    fi
+}
+
 # Main execution
 main() {
     check_desktop_environment || exit 1
@@ -210,6 +247,7 @@ main() {
     create_wineprefix || exit 1
     install_osu || exit 1
     verify_installation || exit 1
+    copy_stable_files || exit 1
 }
 
 # Run main function if script is executed directly
