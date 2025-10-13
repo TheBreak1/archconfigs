@@ -139,63 +139,6 @@ install_osu() {
     read -p "Press Enter when you have closed osu! to continue..."
 }
 
-# Function to verify installation and troubleshoot
-verify_installation() {
-    print_status "Verification and troubleshooting..."
-    
-    # Ask if osu! launched
-    echo
-    read -p "Did osu! launch? (y/n): " osu_launched
-    case $osu_launched in
-        [Yy]* )
-            print_success "Great! osu! is working."
-            ;;
-        [Nn]* )
-            print_error "osu! did not launch. Please check the installation."
-            print_status "You may need to run the installer again or check for errors."
-            return 1
-            ;;
-        * )
-            print_warning "Please answer with 'y' or 'n'"
-            return 1
-            ;;
-    esac
-    
-    # Ask about sound
-    echo
-    read -p "Did you have sound? (y/n): " sound_working
-    case $sound_working in
-        [Yy]* )
-            print_success "Excellent! Sound is working properly."
-            ;;
-        [Nn]* )
-            print_warning "No sound detected."
-            print_status "This is likely a pipewire configuration issue."
-            echo
-            read -p "Would you like to delete ~/.config/pipewire/ to reset audio configuration? (y/n): " reset_audio
-            case $reset_audio in
-                [Yy]* )
-                    print_status "Deleting ~/.config/pipewire/..."
-                    if rm -rf ~/.config/pipewire/; then
-                        print_success "Audio configuration reset. You may need to restart your session."
-                        print_warning "Please log out and log back in, then test osu! again."
-                    else
-                        print_error "Failed to delete audio configuration"
-                    fi
-                    ;;
-                [Nn]* )
-                    print_status "Audio configuration not modified."
-                    ;;
-                * )
-                    print_warning "Please answer with 'y' or 'n'"
-                    ;;
-            esac
-            ;;
-        * )
-            print_warning "Please answer with 'y' or 'n'"
-            ;;
-    esac
-}
 
 # Function to copy stable files
 copy_stable_files() {
@@ -245,9 +188,8 @@ main() {
     install_pipewire_media_session || exit 1
     downgrade_wine || exit 1
     create_wineprefix || exit 1
-    install_osu || exit 1
-    verify_installation || exit 1
     copy_stable_files || exit 1
+    install_osu || exit 1
 }
 
 # Run main function if script is executed directly
