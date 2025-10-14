@@ -36,6 +36,48 @@ check_desktop_environment() {
     fi
 }
 
+# Function to check and handle resume flag
+check_resume_flag() {
+    FLAG_FILE="$HOME/.osu_stable_install_flag"
+    
+    if [[ -f "$FLAG_FILE" ]]; then
+        print_warning "Resume flag detected. Previous installation was interrupted."
+        print_status "Continuing from where we left off..."
+        
+        # Read the flag to see where we left off
+        local flag_content=$(cat "$FLAG_FILE")
+        case $flag_content in
+            "copy_stable_files_complete")
+                print_status "Stable files already copied. Proceeding to wine-osu setup..."
+                setup_wine_osu || exit 1
+                ;;
+            *)
+                print_warning "Unknown flag content: $flag_content"
+                print_status "Starting fresh installation..."
+                rm -f "$FLAG_FILE"
+                ;;
+        esac
+        return 0
+    fi
+    return 1
+}
+
+# Function to create resume flag
+create_resume_flag() {
+    FLAG_FILE="$HOME/.osu_stable_install_flag"
+    echo "$1" > "$FLAG_FILE"
+    print_status "Created resume flag: $1"
+}
+
+# Function to remove resume flag
+remove_resume_flag() {
+    FLAG_FILE="$HOME/.osu_stable_install_flag"
+    if [[ -f "$FLAG_FILE" ]]; then
+        rm -f "$FLAG_FILE"
+        print_status "Removed resume flag"
+    fi
+}
+
 # Function to install dependencies
 install_dependencies() {
     print_status "Installing dependencies..."
@@ -139,6 +181,21 @@ install_osu() {
     read -p "Press Enter when you have closed osu! to continue..."
 }
 
+# Function to download and setup wine-osu
+setup_wine_osu() {
+    print_status "Downloading and setting up wine-osu..."
+    
+    # Download, extract, and setup wine-osu
+    if cd ~/Downloads && wget https://files.lopij.xyz/files/981ea24e3c6662bc.xz -O wine-osu-7.15.2-x86_64.tar.xz && tar -xvf wine-osu-7.15.2-x86_64.tar.xz && cp -r wine-osu ~/wine-osu && rm -rf wine-osu && cd; then
+        print_success "wine-osu setup completed successfully!"
+        # Remove resume flag after successful completion
+        remove_resume_flag
+    else
+        print_error "Failed to setup wine-osu"
+        return 1
+    fi
+}
+
 
 # Function to copy stable files
 copy_stable_files() {
@@ -179,10 +236,19 @@ copy_stable_files() {
         print_error "Failed to copy osu.desktop"
         return 1
     fi
+    
+    # Create resume flag after successful completion
+    create_resume_flag "copy_stable_files_complete"
 }
 
 # Main execution
 main() {
+    # Check if we need to resume from a previous installation
+    if check_resume_flag; then
+        return 0
+    fi
+    
+    # Fresh installation
     check_desktop_environment || exit 1
     install_dependencies || exit 1
     install_pipewire_media_session || exit 1
@@ -190,6 +256,7 @@ main() {
     create_wineprefix || exit 1
     copy_stable_files || exit 1
     install_osu || exit 1
+    setup_wine_osu || exit 1
 }
 
 # Run main function if script is executed directly
