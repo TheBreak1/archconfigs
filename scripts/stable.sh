@@ -82,15 +82,8 @@ remove_resume_flag() {
 install_dependencies() {
     print_status "Installing dependencies..."
     
-    # Install extended dependency list for osu!/Wine environment
-    if sudo pacman -S --noconfirm --needed \
-        giflib lib32-giflib libpng lib32-libpng libldap gst-plugins-base-libs lib32-libldap gnutls lib32-gnutls \
-        mpg123 lib32-mpg123 openal lib32-openal v4l-utils lib32-v4l-utils libpulse lib32-libpulse libgpg-error \
-        lib32-libgpg-error alsa-plugins lib32-alsa-plugins alsa-lib lib32-alsa-lib libjpeg-turbo lib32-libjpeg-turbo \
-        sqlite lib32-sqlite libxcomposite lib32-libxcomposite libxinerama lib32-libgcrypt libgcrypt lib32-libxinerama \
-        ncurses lib32-ncurses opencl-icd-loader lib32-opencl-icd-loader libxslt lib32-libxslt libva lib32-libva gtk3 \
-        lib32-gtk3 lib32-gst-plugins-base-libs vulkan-icd-loader lib32-vulkan-icd-loader lib32-nvidia-utils \
-        winetricks; then
+    # Install winetricks, lib32-gnutls, lib32-libxcomposite, and lib32-nvidia-utils
+    if sudo pacman -S --noconfirm --needed winetricks lib32-gnutls lib32-libxcomposite lib32-nvidia-utils; then
         print_success "Dependencies installed successfully!"
     else
         print_error "Failed to install dependencies"
