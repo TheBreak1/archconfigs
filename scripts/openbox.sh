@@ -70,7 +70,7 @@ echo "Configs directory (resolved): $CONFIGS_DIR"
 install_desktop_components() {
     echo "Installing desktop components..."
     # Installing base desktop (requires root):
-    pacman -S --noconfirm --needed openbox ly alacritty rofi adapta-gtk-theme noto-fonts lxappearance lxappearance-obconf nitrogen tint2 lxrandr
+    pacman -S --noconfirm --needed openbox alacritty rofi adapta-gtk-theme noto-fonts lxappearance lxappearance-obconf nitrogen tint2 lxrandr
     
     # Ensure ~/.config directory exists with proper permissions
     print_status "Ensuring ~/.config directory exists with proper permissions"
@@ -137,29 +137,60 @@ install_desktop_components() {
         print_status "Script directory: $SCRIPT_DIR"
     fi
 
-    print_status "Enabling ly display manager (no immediate start)"
-    systemctl enable ly
+}
 
-    # Configure ly animation if config exists
-    LY_CONF="/etc/ly/config.ini"
-    if [ -f "$LY_CONF" ]; then
-        print_status "Found ly config: $LY_CONF"
-        print_status "Checking animation setting..."
-        if grep -qE '^\s*animation\s*=\s*none\s*$' "$LY_CONF"; then
-            print_status "Updating 'animation = none' -> 'animation = colormix'"
-            sed -i 's/^\s*animation\s*=\s*none\s*$/animation = colormix/' "$LY_CONF"
-        else
-            if grep -qE '^\s*animation\s*=' "$LY_CONF"; then
-                print_status "Setting existing animation to colormix"
-                sed -i 's/^\s*animation\s*=.*/animation = colormix/' "$LY_CONF"
+install_and_configure_ly() {
+    echo -e "${BLUE}==========================================${NC}"
+    echo -e "${YELLOW}Installing Ly Display Manager${NC}"
+    echo -e "${BLUE}==========================================${NC}"
+    echo -e "${YELLOW}This step might replace the existing display manager.${NC}"
+    echo -ne "Do you want to install it? (y/n): "
+    read -r want_ly
+    if [[ "$want_ly" =~ ^[Yy]$ ]]; then
+        print_status "Installing ly display manager..."
+        pacman -S --noconfirm --needed ly
+
+        print_status "Enabling ly display manager (no immediate start)"
+        systemctl enable ly
+
+        # Configure ly animation if config exists
+        LY_CONF="/etc/ly/config.ini"
+        if [ -f "$LY_CONF" ]; then
+            print_status "Found ly config: $LY_CONF"
+            print_status "Checking animation setting..."
+            if grep -qE '^\s*animation\s*=\s*none\s*$' "$LY_CONF"; then
+                print_status "Updating 'animation = none' -> 'animation = colormix'"
+                sed -i 's/^\s*animation\s*=\s*none\s*$/animation = colormix/' "$LY_CONF"
             else
-                print_status "Appending animation = colormix"
-                printf '\nanimation = colormix\n' >> "$LY_CONF"
+                if grep -qE '^\s*animation\s*=' "$LY_CONF"; then
+                    print_status "Setting existing animation to colormix"
+                    sed -i 's/^\s*animation\s*=.*/animation = colormix/' "$LY_CONF"
+                else
+                    print_status "Appending animation = colormix"
+                    printf '\nanimation = colormix\n' >> "$LY_CONF"
+                fi
             fi
+            # Ensure bigclock is enabled
+            print_status "Checking bigclock setting..."
+            if grep -qE '^\s*bigclock\s*=\s*none\s*$' "$LY_CONF"; then
+                print_status "Updating 'bigclock = none' -> 'bigclock = en'"
+                sed -i 's/^\s*bigclock\s*=\s*none\s*$/bigclock = en/' "$LY_CONF"
+            else
+                if grep -qE '^\s*bigclock\s*=' "$LY_CONF"; then
+                    print_status "Setting existing bigclock to en"
+                    sed -i 's/^\s*bigclock\s*=.*/bigclock = en/' "$LY_CONF"
+                else
+                    print_status "Appending bigclock = en"
+                    printf '\nbigclock = en\n' >> "$LY_CONF"
+                fi
+            fi
+
+            print_success "ly visual settings updated (animation, bigclock) — take effect on next ly start"
+        else
+            print_warning "ly config not found at $LY_CONF; skipping animation change"
         fi
-        print_success "ly animation set to colormix (takes effect on next ly start)"
     else
-        print_warning "ly config not found at $LY_CONF; skipping animation change"
+        print_status "Skipping ly..."
     fi
 }
 
@@ -196,5 +227,6 @@ install_applications() {
 pacman -Sy
 
 install_desktop_components
+install_and_configure_ly
 install_applications
 print_success "Done!"
