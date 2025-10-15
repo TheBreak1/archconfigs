@@ -83,7 +83,7 @@ install_dependencies() {
     print_status "Installing dependencies..."
     
     # Install winetricks, lib32-gnutls, lib32-libxcomposite, and lib32-nvidia-utils
-    if sudo pacman -S --noconfirm --needed winetricks lib32-gnutls lib32-libxcomposite lib32-nvidia-utils; then
+    if sudo pacman -S --noconfirm --needed winetricks lib32-gnutls lib32-libxcomposite lib32-nvidia-utils lib32-openal lib32-libpulse lib32-alsa-plugins lib32-libva; then
         print_success "Dependencies installed successfully!"
     else
         print_error "Failed to install dependencies"
