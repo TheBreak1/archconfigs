@@ -70,7 +70,7 @@ echo "Configs directory (resolved): $CONFIGS_DIR"
 install_desktop_components() {
     echo "Installing desktop components..."
     # Installing base desktop (requires root):
-    pacman -S --noconfirm --needed openbox alacritty rofi adapta-gtk-theme noto-fonts lxappearance lxappearance-obconf nitrogen tint2 lxrandr
+    pacman -S --noconfirm --needed openbox alacritty rofi adapta-gtk-theme noto-fonts lxappearance lxappearance-obconf tint2 lxrandr
     
     # Ensure ~/.config directory exists with proper permissions
     print_status "Ensuring ~/.config directory exists with proper permissions"
